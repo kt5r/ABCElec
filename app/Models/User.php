@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'phone',
+        'address',
+        'city',
+        'postal_code',
+        'country',
+        'is_active',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
+            "address" => 'array'
+        ];
+    }
+
+    // Role checking methods
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOperationManager()
+    {
+        return $this->role === 'operation_manager';
+    }
+
+    public function isSalesManager()
+    {
+        return $this->role === 'sales_manager';
+    }
+
+    public function isCustomer()
+    {
+        return $this->role === 'customer';
+    }
+
+    public function hasAdminAccess()
+    {
+        return in_array($this->role, ['admin', 'operation_manager']);
+    }
+
+    public function canManageProducts()
+    {
+        return in_array($this->role, ['admin', 'operation_manager']);
+    }
+
+    public function canViewReports()
+    {
+        return in_array($this->role, ['admin', 'operation_manager', 'sales_manager']);
+    }
+
+    public function hasRole($roles)
+    {
+        if (is_array($roles)) {
+            return in_array($this->role, $roles);
+        }
+
+        return $this->role === $roles;
+    }
+
+
+    // Relationships
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+    public function getCartCount()
+    {
+        return $this->cartItems()->sum('quantity');
+    }
+    public function getCartTotal()
+    {
+        return $this->cartItems()->with('product')->get()->sum(function ($item) {
+            return $item->quantity * ($item->product->sale_price ?? $item->product->price);
+        });
+    }
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+}
