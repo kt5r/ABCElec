@@ -58,9 +58,6 @@ class ProductController extends Controller
             case 'name':
                 $query->orderBy('name', 'asc');
                 break;
-            case 'popularity':
-                $query->orderBy('views_count', 'desc');
-                break;
             default:
                 $query->orderBy($sortBy, $sortOrder);
         }
@@ -91,36 +88,28 @@ class ProductController extends Controller
     /**
      * Display the specified product
      */
-    public function show(Product $product)
+    public function show($slug)
     {
+        $product = Product::where('slug', $slug)->first();
+
         // Check if product is active
-        if (!$product->is_active) {
+        if (!$product->status) {
             abort(404);
         }
 
-        // Increment view count
-        $product->increment('views_count');
-
-        // Load relationships
-        $product->load(['category', 'images', 'reviews.user']);
-
         // Get related products
-        $relatedProducts = Product::with(['category', 'images'])
+        $product->load(['category']);
+        
+        $relatedProducts = Product::with('category')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            ->where('is_active', true)
+            ->where('status', true)
             ->limit(4)
             ->get();
 
-        // Calculate average rating
-        $averageRating = $product->reviews()->avg('rating') ?? 0;
-        $reviewsCount = $product->reviews()->count();
-
-        return view('products.show', compact(
+        return view('product.show', compact(
             'product',
             'relatedProducts',
-            'averageRating',
-            'reviewsCount'
         ));
     }
 

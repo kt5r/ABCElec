@@ -20,7 +20,6 @@ class CategoryController extends Controller
             }])
             ->with(['products' => function ($query) {
                 $query->where('is_active', true)
-                      ->with('images')
                       ->limit(3);
             }])
             ->orderBy('sort_order')
@@ -32,16 +31,17 @@ class CategoryController extends Controller
     /**
      * Display the specified category and its products
      */
-    public function show(Category $category, Request $request)
+    public function show($slug, Request $request)
     {
+        $category = Category::where('slug', $slug)->first();
+        
         // Check if category is active
         if (!$category->is_active) {
             abort(404);
         }
 
-        $query = Product::with(['images'])
-            ->where('category_id', $category->id)
-            ->where('is_active', true);
+        $query = Product::where('category_id', $category->id)
+            ->where('status', true);
 
         // Search within category
         if ($request->has('search') && $request->search) {
@@ -76,9 +76,6 @@ class CategoryController extends Controller
             case 'name':
                 $query->orderBy('name', 'asc');
                 break;
-            case 'popularity':
-                $query->orderBy('views_count', 'desc');
-                break;
             default:
                 $query->orderBy($sortBy, $sortOrder);
         }
@@ -87,24 +84,14 @@ class CategoryController extends Controller
 
         // Get price range for this category
         $priceRange = Product::where('category_id', $category->id)
-            ->where('is_active', true)
+            ->where('status', true)
             ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
             ->first();
 
-        // Get subcategories if any
-        $subcategories = Category::where('parent_id', $category->id)
-            ->where('is_active', true)
-            ->withCount(['products' => function ($query) {
-                $query->where('is_active', true);
-            }])
-            ->orderBy('sort_order')
-            ->get();
-
-        return view('categories.show', compact(
+        return view('category.show', compact(
             'category',
             'products',
             'priceRange',
-            'subcategories',
             'request'
         ));
     }
@@ -118,8 +105,7 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Category not found'], 404);
         }
 
-        $query = Product::with(['images'])
-            ->where('category_id', $category->id)
+        $query = Product::where('category_id', $category->id)
             ->where('is_active', true);
 
         // Apply filters if provided

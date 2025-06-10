@@ -60,7 +60,7 @@ class HomeController extends BaseController
         $categoriesWithProducts = [];
         foreach (['kitchen', 'bathroom', 'living', 'other'] as $categorySlug) {
             $category = Category::where('slug', $categorySlug)
-                ->where('status', true)
+                ->where('is_active', true)
                 ->first();
             
             if ($category) {

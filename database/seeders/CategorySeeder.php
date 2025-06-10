@@ -18,7 +18,7 @@ class CategorySeeder extends Seeder
                 'slug' => 'kitchen',
                 'description' => 'Kitchen appliances and accessories for modern homes',
                 'image' => 'categories/kitchen.jpg',
-                'status' => true,
+                'is_active' => true,
                 'sort_order' => 1
             ],
             [
@@ -26,7 +26,7 @@ class CategorySeeder extends Seeder
                 'slug' => 'bathroom',
                 'description' => 'Bathroom fixtures and accessories',
                 'image' => 'categories/bathroom.jpg',
-                'status' => true,
+                'is_active' => true,
                 'sort_order' => 2
             ],
             [
@@ -34,7 +34,7 @@ class CategorySeeder extends Seeder
                 'slug' => 'living',
                 'description' => 'Living room electronics and entertainment systems',
                 'image' => 'categories/living.jpg',
-                'status' => true,
+                'is_active' => true,
                 'sort_order' => 3
             ],
             [
@@ -42,7 +42,7 @@ class CategorySeeder extends Seeder
                 'slug' => 'other',
                 'description' => 'Other electronic accessories and gadgets',
                 'image' => 'categories/other.jpg',
-                'status' => true,
+                'is_active' => true,
                 'sort_order' => 4
             ]
         ];

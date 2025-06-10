@@ -67,7 +67,6 @@ return [
     'shipping' => 'Shipping',
 
     // Order related
-    'order_history' => 'Order History',
     'order_number' => 'Order Number',
     'order_date' => 'Order Date',
     'order_status' => 'Order Status',
