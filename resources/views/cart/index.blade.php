@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', __('Shopping Cart'))
+@section('title', __('messages.shopping_cart'))
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">{{ __('Shopping Cart') }}</h1>
-            <a href="{{ route('products.index') }}" 
+            <h1 class="text-3xl font-bold text-gray-900">{{ __('messages.shopping_cart') }}</h1>
+            <a href="{{ route('product.index') }}" 
                class="text-indigo-600 hover:text-indigo-900 font-medium">
-                {{ __('Continue Shopping') }}
+                {{ __('messages.continue_shopping') }}
             </a>
         </div>
 
@@ -20,7 +20,7 @@
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200">
-                            <h2 class="text-lg font-semibold text-gray-900">{{ __('Cart Items') }}</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">{{ __('messages.cart_items') }}</h2>
                         </div>
                         
                         <div class="divide-y divide-gray-200">
@@ -44,7 +44,7 @@
                                     <!-- Product Details -->
                                     <div class="flex-1 min-w-0">
                                         <h3 class="text-lg font-medium text-gray-900">{{ $item->product->name }}</h3>
-                                        <p class="text-sm text-gray-500">{{ __(ucfirst($item->product->category)) }}</p>
+                                        <p class="text-sm text-gray-500">{{ __(ucfirst($item->product->category->name)) }}</p>
                                         <p class="text-lg font-semibold text-indigo-600">${{ number_format($item->product->price, 2) }}</p>
                                     </div>
 
@@ -81,7 +81,7 @@
                                     <!-- Remove Button -->
                                     <div>
                                         <form method="POST" action="{{ route('cart.remove', $item) }}" 
-                                              onsubmit="return confirm('{{ __('Remove this item from cart?') }}')">
+                                              onsubmit="return confirm('{{ __('messages.remove_item') }}')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
@@ -101,22 +101,22 @@
                 <!-- Order Summary -->
                 <div class="lg:col-span-1">
                     <div class="bg-white rounded-lg shadow-md p-6 sticky top-8">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Order Summary') }}</h2>
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('messages.order_summary') }}</h2>
                         
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">{{ __('Subtotal') }}</span>
+                                <span class="text-gray-600">{{ __('messages.subtotal') }}</span>
                                 <span class="font-medium">${{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">{{ __('Tax') }}</span>
+                                <span class="text-gray-600">{{ __('messages.tax') }}</span>
                                 <span class="font-medium">${{ number_format($tax, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">{{ __('Shipping') }}</span>
+                                <span class="text-gray-600">{{ __('messages.shipping') }}</span>
                                 <span class="font-medium">
                                     @if($subtotal >= 100)
-                                        <span class="text-green-600">{{ __('Free') }}</span>
+                                        <span class="text-green-600">{{ __('messages.free') }}</span>
                                     @else
                                         ${{ number_format($shipping, 2) }}
                                     @endif
@@ -124,46 +124,38 @@
                             </div>
                             <div class="border-t border-gray-200 pt-3">
                                 <div class="flex justify-between">
-                                    <span class="text-lg font-semibold text-gray-900">{{ __('Total') }}</span>
+                                    <span class="text-lg font-semibold text-gray-900">{{ __('messages.total') }}</span>
                                     <span class="text-lg font-semibold text-gray-900">${{ number_format($total, 2) }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        @if($subtotal < 100)
-                            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                <p class="text-sm text-blue-800">
-                                    {{ __('Add') }} ${{ number_format(100 - $subtotal, 2) }} {{ __('more for free shipping!') }}
-                                </p>
-                            </div>
-                        @endif
-
                         <div class="space-y-3">
                             <a href="{{ route('checkout.index') }}" 
                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-center py-3 px-4 rounded-md font-medium transition duration-200 block">
-                                {{ __('Proceed to Checkout') }}
+                                {{ __('messages.proceed_to_checkout') }}
                             </a>
                             
                             <form method="POST" action="{{ route('cart.clear') }}" 
-                                  onsubmit="return confirm('{{ __('Clear all items from cart?') }}')"
+                                  onsubmit="return confirm('{{ __('messages.clear_all_items') }}')"
                                   class="w-full">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" 
                                         class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md font-medium transition duration-200">
-                                    {{ __('Clear Cart') }}
+                                    {{ __('messages.clear_cart') }}
                                 </button>
                             </form>
                         </div>
 
                         <!-- Continue Shopping -->
                         <div class="mt-6 pt-6 border-t border-gray-200">
-                            <a href="{{ route('products.index') }}" 
+                            <a href="{{ route('product.index') }}" 
                                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
-                                {{ __('Continue Shopping') }}
+                                {{ __('messages.continue_shopping') }}
                             </a>
                         </div>
                     </div>
@@ -175,11 +167,11 @@
                 <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h7.5M17 18a2 2 0 11-4 0 2 2 0 014 0zM9 18a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('Your cart is empty') }}</h3>
-                <p class="text-gray-500 mb-6">{{ __('Add some products to get started!') }}</p>
-                <a href="{{ route('products.index') }}" 
+                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.cart_empty') }}</h3>
+                <p class="text-gray-500 mb-6">{{ __('messages.get_started') }}</p>
+                <a href="{{ route('product.index') }}" 
                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition duration-200">
-                    {{ __('Shop Now') }}
+                    {{ __('messages.shop_now') }}
                 </a>
             </div>
         @endif

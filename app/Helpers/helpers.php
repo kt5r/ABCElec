@@ -16,7 +16,7 @@ if (!function_exists('generateOrderNumber')) {
      */
     function generateOrderNumber(): string
     {
-        return 'CABC-' . date('Y') . '-' . strtoupper(uniqid());
+        return 'ABC-' . date('Y') . '-' . strtoupper(uniqid());
     }
 }
 

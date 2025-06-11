@@ -22,12 +22,12 @@ class AdminUserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@cabc.com'],
             [
-                'name' => 'CABC Admin',
+                'name' => 'ABC Admin',
                 'password' => Hash::make('admin123'),
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
                 'phone' => '+94123456789',
-                'address' => 'CABC Head Office, Colombo',
+                'address' => 'ABC Head Office, Colombo',
                 'role_id' => $adminRole->id,
             ]
         );
@@ -41,7 +41,7 @@ class AdminUserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
                 'phone' => '+94123456790',
-                'address' => 'CABC Operations, Colombo',
+                'address' => 'ABC Operations, Colombo',
                 'role_id' => $adminRole->id,
             ]
         );
@@ -55,7 +55,7 @@ class AdminUserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
                 'phone' => '+94123456791',
-                'address' => 'CABC Sales Department, Colombo',
+                'address' => 'ABC Sales Department, Colombo',
                 'role_id' => $adminRole->id,
             ]
         );

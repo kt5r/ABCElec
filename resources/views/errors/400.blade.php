@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('messages.page_not_found'))
+@section('title', __('messages.bad_request'))
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -8,13 +8,13 @@
         <div>
             <div class="mx-auto h-32 w-32 text-gray-400">
                 <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.785-6.168-2.107A6.973 6.973 0 013 12c0-2.343.793-4.495 2.121-6.089A7.962 7.962 0 0112 3c2.34 0 4.467.785 6.168 2.107A6.973 6.973 0 0121 12c0 2.343-.793 4.495-2.121 6.089z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
             </div>
-            <h2 class="mt-6 text-6xl font-extrabold text-gray-900">404</h2>
-            <h3 class="mt-2 text-2xl font-bold text-gray-900">{{ __('messages.page_not_found') }}</h3>
+            <h2 class="mt-6 text-6xl font-extrabold text-gray-900">400</h2>
+            <h3 class="mt-2 text-2xl font-bold text-gray-900">{{ __('messages.bad_request') }}</h3>
             <p class="mt-2 text-sm text-gray-600">
-                {{ __('messages.page_not_found_description') }}
+                {{ __('messages.bad_request_description') }}
             </p>
         </div>
         
@@ -33,14 +33,14 @@
         <div class="mt-8">
             <h4 class="text-sm font-medium text-gray-900 mb-4">{{ __('messages.quick_links') }}</h4>
             <div class="grid grid-cols-2 gap-4 text-sm">
-                <a href="{{ route('admin.products.index') }}" class="text-blue-600 hover:text-blue-800">
+                <a href="{{ route('product.index') }}" class="text-blue-600 hover:text-blue-800">
                     {{ __('messages.products') }}
                 </a>
                 <a href="{{ route('admin.categories.index') }}" class="text-blue-600 hover:text-blue-800">
                     {{ __('messages.categories') }}
                 </a>
                 @auth
-                    <a href="{{ route('profile.show') }}" class="text-blue-600 hover:text-blue-800">
+                    <a href="{{ route('profile.edit') }}" class="text-blue-600 hover:text-blue-800">
                         {{ __('messages.profile') }}
                     </a>
                     <a href="{{ route('admin.orders.index') }}" class="text-blue-600 hover:text-blue-800">
@@ -58,4 +58,4 @@
         </div>
     </div>
 </div>
-@endsection
+@endsection 

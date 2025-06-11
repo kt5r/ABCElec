@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'ABCElec'),
 
     /*
     |--------------------------------------------------------------------------
@@ -165,7 +165,7 @@ return [
     */
 
     'business' => [
-        'name' => 'CABC Private Limited',
+        'name' => 'ABC Private Limited',
         'tagline' => 'Your Electronics Destination',
         'address' => 'No. 123, Kandy Road, Kandy, Sri Lanka',
         'phone' => '+94 81 222 3333',

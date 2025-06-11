@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('order_number')->unique();
-            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])
+            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled','confirmed'])
                   ->default('pending');
             $table->decimal('total_amount', 10, 2);
             $table->json('shipping_address');
             $table->json('billing_address');
             $table->string('payment_method')->default('cash_on_delivery');
-            $table->enum('payment_status', ['pending', 'completed', 'failed', 'refunded'])
+            $table->enum('payment_status', ['pending', 'completed', 'failed', 'refunded','paid'])
                   ->default('pending');
             $table->text('notes')->nullable();
             $table->timestamp('shipped_at')->nullable();

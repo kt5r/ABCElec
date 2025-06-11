@@ -12,7 +12,7 @@ class ProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && in_array(auth()->user()->role, ['admin', 'operation_manager']);
+        return true;
     }
 
     /**
@@ -22,62 +22,57 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = $this->route('product') ? $this->route('product')->id : null;
-
-        return [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products', 'name')->ignore($productId)
-            ],
-            'description' => 'required|string|max:1000',
-            'price' => 'required|numeric|min:0.01|max:999999.99',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
-            'sku' => [
-                'required',
-                'string',
-                'max:100',
-                Rule::unique('products', 'sku')->ignore($productId)
-            ],
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'sku' => ['required', 'string', 'max:50'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'description' => ['required', 'string'],
+            'short_description' => ['nullable', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'sale_price' => ['nullable', 'numeric', 'min:0', 'lt:price'],
+            'stock_quantity' => ['required_if:manage_stock,1', 'nullable', 'integer', 'min:0'],
+            'manage_stock' => ['boolean'],
+            'in_stock' => ['boolean'],
+            'featured' => ['boolean'],
+            'status' => ['boolean'],
+            'featured_image' => ['nullable', 'image', 'max:2048'], // 2MB max
         ];
+
+        // Add unique SKU rule for create
+        if ($this->isMethod('POST')) {
+            $rules['sku'][] = 'unique:products,sku';
+        } else {
+            $rules['sku'][] = Rule::unique('products', 'sku')->ignore($this->product);
+        }
+
+        return $rules;
     }
 
     /**
-     * Get custom error messages for validator errors.
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
      */
     public function messages(): array
     {
         return [
-            'name.required' => 'Product name is required.',
-            'name.unique' => 'A product with this name already exists.',
-            'description.required' => 'Product description is required.',
-            'price.required' => 'Product price is required.',
-            'price.numeric' => 'Price must be a valid number.',
-            'price.min' => 'Price must be at least $0.01.',
-            'stock.required' => 'Stock quantity is required.',
-            'stock.integer' => 'Stock must be a whole number.',
-            'stock.min' => 'Stock cannot be negative.',
-            'category_id.required' => 'Please select a category.',
-            'category_id.exists' => 'Selected category does not exist.',
-            'image.image' => 'File must be an image.',
-            'image.mimes' => 'Image must be in JPEG, PNG, JPG, or GIF format.',
-            'image.max' => 'Image size cannot exceed 2MB.',
-            'sku.required' => 'SKU is required.',
-            'sku.unique' => 'A product with this SKU already exists.',
+            'name.required' => __('The product name is required.'),
+            'sku.required' => __('The SKU is required.'),
+            'sku.unique' => __('This SKU is already in use.'),
+            'category_id.required' => __('Please select a category.'),
+            'category_id.exists' => __('The selected category is invalid.'),
+            'description.required' => __('The product description is required.'),
+            'price.required' => __('The price is required.'),
+            'price.numeric' => __('The price must be a number.'),
+            'price.min' => __('The price must be greater than or equal to 0.'),
+            'sale_price.numeric' => __('The sale price must be a number.'),
+            'sale_price.min' => __('The sale price must be greater than or equal to 0.'),
+            'sale_price.lt' => __('The sale price must be less than the regular price.'),
+            'stock_quantity.required_if' => __('The stock quantity is required when managing stock.'),
+            'stock_quantity.integer' => __('The stock quantity must be a whole number.'),
+            'stock_quantity.min' => __('The stock quantity must be greater than or equal to 0.'),
+            'featured_image.image' => __('The file must be an image.'),
+            'featured_image.max' => __('The image size must not exceed 2MB.'),
         ];
-    }
-
-    /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'is_active' => $this->has('is_active') ? true : false,
-        ]);
     }
 }

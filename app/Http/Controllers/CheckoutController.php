@@ -3,36 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class CheckoutController extends Controller
+class CheckoutController extends BaseController
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->applyLocaleMiddleware();
+    }
     /**
      * Show checkout page
      */
     public function index()
     {
-        $cart = Cart::where('user_id', Auth::id())->first();
+        $cartItems = CartItem::forUser(Auth::id())->get();
         
-        if (!$cart || $cart->total_items == 0) {
+        if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')
                 ->with('error', __('Your cart is empty'));
         }
 
-        $cartItems = CartItem::with(['product.images'])
-            ->where('cart_id', $cart->id)
-            ->get();
-
         // Verify all items are still available
         foreach ($cartItems as $item) {
-            if (!$item->product->is_active || !$item->product->is_in_stock) {
+            if (!$item->product->status || !$item->product->in_stock) {
                 return redirect()->route('cart.index')
                     ->with('error', __('Some items in your cart are no longer available'));
             }
@@ -43,9 +41,7 @@ class CheckoutController extends Controller
             }
         }
 
-        $subtotal = $cartItems->sum(function ($item) {
-            return $item->quantity * $item->product->price;
-        });
+        $subtotal = $cartItems->sum('subtotal');
 
         // Calculate tax and shipping
         $taxRate = 0.10; // 10% tax
@@ -72,18 +68,28 @@ class CheckoutController extends Controller
     public function process(Request $request)
     {
         $request->validate([
-            'billing_first_name' => 'required|string|max:255',
-            'billing_last_name' => 'required|string|max:255',
-            'billing_email' => 'required|email|max:255',
-            'billing_phone' => 'required|string|max:20',
-            'billing_address' => 'required|string|max:500',
-            'billing_city' => 'required|string|max:100',
-            'billing_state' => 'required|string|max:100',
-            'billing_postal_code' => 'required|string|max:20',
-            'billing_country' => 'required|string|max:100',
-            'payment_method' => 'required|in:credit_card,paypal,bank_transfer',
-            'terms_accepted' => 'required|accepted'
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'postal_code' => 'required|string|max:20',
+            'country' => 'required|string|max:100',
+            // 'payment_method' => 'required|in:credit_card',
+            // 'terms_accepted' => 'required|accepted'
         ]);
+
+        // Add validation for credit card fields when payment method is credit_card
+        if ($request->payment_method === 'credit_card') {
+            $request->validate([
+                'card_number' => 'required|string|min:16|max:19',
+                'card_expiry' => 'required|string|size:5', // MM/YY format
+                'card_cvc' => 'required|string|size:3',
+                'card_name' => 'required|string|max:255',
+            ]);
+        }
 
         // Validate shipping address if different from billing
         if ($request->has('different_shipping') && $request->different_shipping) {
@@ -98,9 +104,11 @@ class CheckoutController extends Controller
             ]);
         }
 
-        $cart = Cart::where('user_id', Auth::id())->first();
+        $cartItems = CartItem::with('product')
+            ->forUser(Auth::id())
+            ->get();
         
-        if (!$cart || $cart->total_items == 0) {
+        if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')
                 ->with('error', __('Your cart is empty'));
         }
@@ -108,13 +116,9 @@ class CheckoutController extends Controller
         try {
             DB::beginTransaction();
 
-            $cartItems = CartItem::with('product')
-                ->where('cart_id', $cart->id)
-                ->get();
-
             // Verify stock availability one more time
             foreach ($cartItems as $item) {
-                if (!$item->product->is_active || 
+                if (!$item->product->status || 
                     $item->product->stock_quantity < $item->quantity) {
                     throw new \Exception(__('Product :name is no longer available or has insufficient stock', 
                         ['name' => $item->product->name]));
@@ -122,16 +126,14 @@ class CheckoutController extends Controller
             }
 
             // Calculate totals
-            $subtotal = $cartItems->sum(function ($item) {
-                return $item->quantity * $item->product->price;
-            });
+            $subtotal = $cartItems->sum('subtotal');
 
             $taxRate = 0.10;
             $tax = $subtotal * $taxRate;
             $shippingCost = $this->calculateShipping($subtotal);
             $total = $subtotal + $tax + $shippingCost;
 
-            // Create order
+            // Create order - update field names to match form
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'order_number' => $this->generateOrderNumber(),
@@ -145,34 +147,34 @@ class CheckoutController extends Controller
                 'total_amount' => $total,
                 'currency' => 'USD',
                 
-                // Billing address
-                'billing_first_name' => $request->billing_first_name,
-                'billing_last_name' => $request->billing_last_name,
-                'billing_email' => $request->billing_email,
-                'billing_phone' => $request->billing_phone,
-                'billing_address' => $request->billing_address,
-                'billing_city' => $request->billing_city,
-                'billing_state' => $request->billing_state,
-                'billing_postal_code' => $request->billing_postal_code,
-                'billing_country' => $request->billing_country,
+                // Billing address - use form field names
+                'billing_first_name' => $request->first_name,
+                'billing_last_name' => $request->last_name,
+                'billing_email' => $request->email,
+                'billing_phone' => $request->phone,
+                'billing_address' => $request->address,
+                'billing_city' => $request->city,
+                'billing_state' => $request->state,
+                'billing_postal_code' => $request->postal_code,
+                'billing_country' => $request->country,
                 
                 // Shipping address
                 'shipping_first_name' => $request->different_shipping ? 
-                    $request->shipping_first_name : $request->billing_first_name,
+                    $request->shipping_first_name : $request->first_name,
                 'shipping_last_name' => $request->different_shipping ? 
-                    $request->shipping_last_name : $request->billing_last_name,
+                    $request->shipping_last_name : $request->last_name,
                 'shipping_address' => $request->different_shipping ? 
-                    $request->shipping_address : $request->billing_address,
+                    $request->shipping_address : $request->address,
                 'shipping_city' => $request->different_shipping ? 
-                    $request->shipping_city : $request->billing_city,
+                    $request->shipping_city : $request->city,
                 'shipping_state' => $request->different_shipping ? 
-                    $request->shipping_state : $request->billing_state,
+                    $request->shipping_state : $request->state,
                 'shipping_postal_code' => $request->different_shipping ? 
-                    $request->shipping_postal_code : $request->billing_postal_code,
+                    $request->shipping_postal_code : $request->postal_code,
                 'shipping_country' => $request->different_shipping ? 
-                    $request->shipping_country : $request->billing_country,
+                    $request->shipping_country : $request->country,
                 
-                'notes' => $request->notes
+                'notes' => $request->order_notes
             ]);
 
             // Create order items and update product stock
@@ -203,12 +205,8 @@ class CheckoutController extends Controller
                 'payment_transaction_id' => $paymentResult['transaction_id']
             ]);
 
-            // Clear cart
-            CartItem::where('cart_id', $cart->id)->delete();
-            $cart->update([
-                'total_items' => 0,
-                'total_amount' => 0
-            ]);
+            // Clear cart items for the user
+            CartItem::forUser(Auth::id())->delete();
 
             DB::commit();
 
@@ -301,8 +299,7 @@ class CheckoutController extends Controller
                 ];
         }
     }
-
-    /**
+   /**
      * Simulate credit card payment
      */
     private function processCreditCardPayment(Order $order, Request $request)
@@ -311,7 +308,7 @@ class CheckoutController extends Controller
         $request->validate([
             'card_number' => 'required|string',
             'card_expiry' => 'required|string',
-            'card_cvv' => 'required|string|min:3|max:4',
+            'card_cvc' => 'required|string|min:3|max:4',
             'card_name' => 'required|string|max:255'
         ]);
 
@@ -332,8 +329,7 @@ class CheckoutController extends Controller
             'message' => __('Payment failed. Please check your card details and try again.')
         ];
     }
-
-    /**
+   /**
      * Simulate PayPal payment
      */
     private function processPayPalPayment(Order $order, Request $request)

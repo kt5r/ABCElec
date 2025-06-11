@@ -17,12 +17,12 @@
                     </p>
                 </div>
                 <div class="mt-4 flex md:mt-0 md:ml-4">
-                    <button type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <a href="{{ route('admin.reports.sales') }}" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
-                        {{ __('Quick Actions') }}
-                    </button>
+                        {{ __('View Sales Reports') }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Products') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ $totalProducts ?? 0 }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $total_products ?? 0 }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Orders') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ $totalOrders ?? 0 }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $total_orders ?? 0 }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Users') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ $totalUsers ?? 0 }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $total_customers ?? 0 }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Revenue') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">${{ number_format($totalRevenue ?? 0, 2) }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">${{ number_format($total_revenue ?? 0, 2) }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
                         @can('view-sales-reports')
-                        <a href="{{ route('admin.reports.dashboard') }}" class="font-medium text-purple-600 hover:text-purple-500">
+                        <a href="{{ route('admin.reports.sales') }}" class="font-medium text-purple-600 hover:text-purple-500">
                             {{ __('View reports') }}
                         </a>
                         @endcan
@@ -146,7 +146,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 gap-8">
             <!-- Recent Orders -->
             <div class="bg-white shadow rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
@@ -173,7 +173,7 @@
                                             <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                                 <div>
                                                     <p class="text-sm text-gray-500">
-                                                        {{ __('Order') }} #{{ $order->id }} {{ __('by') }} 
+                                                        {{ __('profile.order') }} #{{ $order->id }} {{ __('by') }} 
                                                         <a href="{{ route('admin.users.show', $order->user) }}" class="font-medium text-gray-900">{{ $order->user->name }}</a>
                                                     </p>
                                                 </div>
@@ -193,64 +193,6 @@
                     <div class="mt-6">
                         <a href="{{ route('admin.orders.index') }}" class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                             {{ __('View all orders') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Categories Overview -->
-            <div class="bg-white shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                        {{ __('Product Categories') }}
-                    </h3>
-                    @if(isset($categoryStats) && count($categoryStats) > 0)
-                        <div class="space-y-4">
-                            @foreach($categoryStats as $category => $count)
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
-                                        @switch($category)
-                                            @case('Kitchen')
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 10h18m-9 4h9m-9 4h9M3 14h6m-6 4h6"></path>
-                                                </svg>
-                                                @break
-                                            @case('Bathroom')
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
-                                                </svg>
-                                                @break
-                                            @case('Living')
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"></path>
-                                                </svg>
-                                                @break
-                                            @default
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                                </svg>
-                                        @endswitch
-                                    </div>
-                                    <span class="text-sm font-medium text-gray-900">{{ __($category) }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <span class="text-sm text-gray-500 mr-2">{{ $count }} {{ __('products') }}</span>
-                                    <a href="{{ route('categories.show', strtolower($category)) }}" class="text-indigo-600 hover:text-indigo-500">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-gray-500 text-center py-4">{{ __('No categories found') }}</p>
-                    @endif
-                    <div class="mt-6">
-                        <a href="{{ route('admin.categories.index') }}" class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            {{ __('Manage categories') }}
                         </a>
                     </div>
                 </div>
@@ -317,7 +259,7 @@
                     @endcan
 
                     @can('view-sales-reports')
-                    <a href="{{ route('admin.reports.dashboard') }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <a href="{{ route('admin.reports.sales') }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <div class="flex-shrink-0">
                             <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,8 +269,8 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            <p class="text-sm font-medium text-gray-900">{{ __('View Reports') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('Sales analytics') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('Sales Reports') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('View daily sales reports') }}</p>
                         </div>
                     </a>
                     @endcan

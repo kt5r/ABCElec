@@ -36,7 +36,7 @@ class ProductSeeder extends Seeder
                 'image' => json_encode(is_array($product['image']) ? $product['image'] : [$product['image']]),
                 'featured' => $product['featured'] ?? false,
                 'status' => true,
-                'meta_title' => $product['name'] . ' - CABC Electronics',
+                'meta_title' => $product['name'] . ' - ABC Electronics',
                 'meta_description' => substr($product['description'], 0, 160)
             ]);
         }

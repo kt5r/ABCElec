@@ -9,65 +9,64 @@ use App\Http\Controllers\{
     HomeController,
     ProductController,
     ProfileController,
-    LanguageController
+    LanguageController,
+    SalesReportController
 };
 use Illuminate\Support\Facades\Route;
-use PHPUnit\Framework\Attributes\After;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
 
-
 // Language switching
-// Route::get('/language/{locale}', [LanguageController::class, 'switchLanguage'])->name('language.switch');
-// In your web.php routes file
-
 Route::get('/language/{locale}', function ($locale) {
-    // Validate locale
     if (in_array($locale, ['en', 'si'])) {
-        // Store in session
         session(['locale' => $locale]);
-        
-        // Set for current request
         app()->setLocale($locale);
-        
-        // Optional: Add flash message to verify switch
         session()->flash('locale_changed', 'Language changed to ' . ($locale === 'si' ? 'Sinhala' : 'English'));
     }
-    
     return redirect()->back();
 })->name('language.switch');
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
 
 // Authentication routes
 require __DIR__.'/auth.php';
 
-// Guest routes (for registration, login, etc.)
+// Guest routes
 Route::middleware('guest')->group(function () {
     // Additional guest routes if needed
 });
 
 // Authenticated user routes
-Route::middleware(['auth', 'verified', 'check.user.status'])->group(function () {
-    
+Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Profile management
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::get('/profile', 'show')->name('profile.show');
+        Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
+        Route::patch('/profile/password', 'updatePassword')->name('profile.update-password');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
-        Route::get('/profile/orders', 'orders')->name('profile.orders');
-        Route::get('/profile/order/{order}', 'showOrder')->name('profile.order.show');
+        // Order history and details
+        Route::get('/profile/orders', 'orderHistory')->name('profile.order-history');
+        Route::get('/profile/orders/{order}', 'orderDetails')->name('profile.order-details');
+        Route::patch('/profile/orders/{order}/cancel', 'cancelOrder')->name('profile.order-cancel');
+        Route::get('/profile/orders/{order}/invoice', 'orderInvoice')->name('profile.order-invoice');
     });
-    
+
     // Shopping Cart
     Route::controller(CartController::class)->group(function () {
         Route::get('/cart', 'index')->name('cart.index');
@@ -88,16 +87,15 @@ Route::middleware(['auth', 'verified', 'check.user.status'])->group(function () 
 });
 
 // Admin routes
-Route::middleware(['auth', 'role:admin,operation_manager'])->prefix('admin')->name('admin.')->group(function () {
-    
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Product management
     Route::resource('products', ProductController::class)->except(['show']);
     Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
     
     // Category management
-    Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('categories', CategoryController::class);
     Route::post('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
     
     // Order management
@@ -119,12 +117,17 @@ Route::middleware(['auth', 'role:admin,operation_manager'])->prefix('admin')->na
     Route::get('reports/users', [AdminController::class, 'usersReport'])->name('reports.users');
 });
 
-// Sales Manager routes (limited access)
-Route::middleware(['auth', 'role:sales_manager'])->prefix('sales')->name('sales.')->group(function () {
+// Sales Manager routes
+Route::middleware(['auth', 'can:view-sales-reports'])->prefix('sales')->name('sales.')->group(function () {
     Route::get('/', [AdminController::class, 'salesDashboard'])->name('dashboard');
     Route::get('/reports/daily', [AdminController::class, 'dailySalesReport'])->name('reports.daily');
     Route::get('/reports/export', [AdminController::class, 'exportDailySales'])->name('reports.export');
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports.index');
+});
+
+// Sales Reports Routes
+Route::middleware(['auth', 'can:view-sales-reports'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
 });
 
 // API routes for AJAX calls
@@ -134,13 +137,12 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     Route::post('/cart/quick-add', [CartController::class, 'quickAdd'])->name('cart.quick-add');
 });
 
+// Authentication Routes
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
+
 // Fallback route
 Route::fallback(function () {
     return view('errors.404');
 });
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Product listing (all products)
-Route::get('/products', [ProductController::class, 'index'])->name('product.index');

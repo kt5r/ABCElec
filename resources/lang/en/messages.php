@@ -34,6 +34,11 @@ return [
     'low_stock' => 'Low Stock',
     'sku' => 'SKU',
     'image' => 'Image',
+    'all_products' => 'All Products',
+    'no_products' => 'No products found',
+    'maximum' => 'Maximum',
+    'unavailable' => 'Unavailable',
+    'adding' => 'Adding',
 
     // Cart related
     'shopping_cart' => 'Shopping Cart',
@@ -41,13 +46,17 @@ return [
     'subtotal' => 'Subtotal',
     'total' => 'Total',
     'update_cart' => 'Update Cart',
-    'remove_item' => 'Remove Item',
+    'remove_item' => 'Remove Item ?',
     'continue_shopping' => 'Continue Shopping',
     'checkout' => 'Checkout',
     'cart_empty' => 'Your cart is empty',
     'cart_updated' => 'Cart updated successfully',
     'item_added' => 'Item added to cart',
     'item_removed' => 'Item removed from cart',
+    'clear_cart' => 'Clear Cart',
+    'proceed_to_checkout' => 'Proceed to Checkout',
+    'cart_items' => 'Cart Items',
+    'clear_all_items' => 'Clear All Items ?',
 
     // Checkout
     'shipping_address' => 'Shipping Address',
@@ -65,9 +74,9 @@ return [
     'order_summary' => 'Order Summary',
     'tax' => 'Tax',
     'shipping' => 'Shipping',
+    'free' => 'Free',
 
     // Order related
-    'order_history' => 'Order History',
     'order_number' => 'Order Number',
     'order_date' => 'Order Date',
     'order_status' => 'Order Status',
@@ -156,6 +165,8 @@ return [
     'registration_successful' => 'Registration successful. Please login.',
     'logout_successful' => 'You have been logged out successfully',
     'language_switched' => 'Language switched successfully',
+    'get_started' => 'Add some products to get started!',
+    'error_occured' => 'An error occurred. Please try again.',
 
     // Language
     'language' => 'Language',
@@ -185,6 +196,8 @@ return [
     // Error pages
     'page_not_found' => 'Page Not Found',
     'page_not_found_description' => 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.',
+    'bad_request' => 'Bad Request',
+    'bad_request_description' => 'The server could not understand the request due to invalid syntax or malformed request.',
     'back_to_home' => 'Back to Home',
     'go_back' => 'Go Back',
     'access_denied' => 'Access Denied',
@@ -196,4 +209,37 @@ return [
     // Authentication
     'authentication_required' => 'Authentication required to access this page.',
     'no_role' => 'No Role',
+
+    // Terms and Conditions
+    'terms_and_conditions' => 'Terms and Conditions',
+    'terms_1_title' => '1. Acceptance of Terms',
+    'terms_1_content' => 'By accessing and using ABC Electronics website, you accept and agree to be bound by the terms and provision of this agreement.',
+    'terms_2_title' => '2. Use License',
+    'terms_2_content' => 'Permission is granted to temporarily download one copy of the materials (information or software) on ABC Electronics website for personal, non-commercial transitory viewing only.',
+    'terms_3_title' => '3. Product Information',
+    'terms_3_content' => 'We strive to display as accurately as possible the colors and images of our products. However, we cannot guarantee that your computer monitor\'s display of any color will be accurate.',
+    'terms_4_title' => '4. Pricing and Payment',
+    'terms_4_content' => 'All prices are in Sri Lankan Rupees (LKR) and are subject to change without notice. We reserve the right to modify or discontinue any product without notice at any time.',
+    'terms_5_title' => '5. Shipping and Delivery',
+    'terms_5_content' => 'Delivery times may vary depending on the delivery location and the availability of the product. We will make every effort to deliver your order within the estimated timeframe.',
+
+    // Checkout Success
+    'order_successful' => 'Order Successful',
+    'thank_you_for_order' => 'Thank you for your order! Your order has been placed successfully.',
+    'order_details' => 'Order Details',
+    'order_items' => 'Order Items',
+    'view_order' => 'View Order',
+
+    // Checkout Cancel
+    'payment_cancelled' => 'Payment Cancelled',
+    'try_again' => 'Try Again',
+    'need_help' => 'Need Help?',
+    'payment_help_text' => 'If you\'re having trouble completing your payment, our support team is here to help.',
+    'contact_support' => 'Contact Support',
+
+    // Common
+    'common' => [
+        'view_product' => 'View Product',
+        'products' => 'Products',
+    ],
 ];

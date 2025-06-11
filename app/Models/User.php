@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -95,12 +96,29 @@ class User extends Authenticatable
     public function hasRole($roles)
     {
         if (is_array($roles)) {
-            return in_array($this->role, $roles);
+            return in_array($this->role, $roles) || 
+                   ($this->role_id && in_array($this->role->name, $roles));
         }
 
-        return $this->role === $roles;
+        return $this->role === $roles || 
+               ($this->role_id && $this->role->name === $roles);
     }
 
+    /**
+     * Get the roles that belong to the user.
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    /**
+     * Check if the user has any of the given roles.
+     */
+    public function hasAnyRole(array $roles): bool
+    {
+        return $this->roles()->whereIn('name', $roles)->exists();
+    }
 
     // Relationships
     public function orders()
@@ -124,5 +142,10 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function getRoleAttribute()
+    {
+        return $this->role()->first()?->name ?? null;
     }
 }

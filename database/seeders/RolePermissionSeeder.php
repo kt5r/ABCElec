@@ -63,11 +63,46 @@ class RolePermissionSeeder extends Seeder
             );
         }
 
+        // Define roles with display names
+        $roles = [
+            [
+                'name' => 'admin',
+                'display_name' => 'Administrator',
+                'description' => 'Full system access'
+            ],
+            [
+                'name' => 'operation_manager',
+                'display_name' => 'Operation Manager',
+                'description' => 'Same permissions as Admin'
+            ],
+            [
+                'name' => 'sales_manager',
+                'display_name' => 'Sales Manager',
+                'description' => 'View daily sales reports only'
+            ],
+            [
+                'name' => 'customer',
+                'display_name' => 'Customer',
+                'description' => 'Regular customer account'
+            ]
+        ];
+
         // Seed roles
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $operations = Role::firstOrCreate(['name' => 'operation_manager']);
-        $sales = Role::firstOrCreate(['name' => 'sales_manager']);
-        $customer = Role::firstOrCreate(['name' => 'customer']);
+        foreach ($roles as $role) {
+            Role::firstOrCreate(
+                ['name' => $role['name']],
+                [
+                    'display_name' => $role['display_name'],
+                    'description' => $role['description']
+                ]
+            );
+        }
+
+        // Get role instances
+        $admin = Role::where('name', 'admin')->first();
+        $operations = Role::where('name', 'operation_manager')->first();
+        $sales = Role::where('name', 'sales_manager')->first();
+        $customer = Role::where('name', 'customer')->first();
 
         // Assign all permissions to admin and operations
         $allPermissions = Permission::all()->pluck('id');

@@ -21,172 +21,136 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- User Information -->
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">{{ __('User Information') }}</h3>
-                </div>
-                <div class="px-6 py-4">
-                    <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Full Name') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->name }}</dd>
+        <div class="md:col-span-2">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <span class="text-2xl font-medium text-indigo-800">
+                                {{ strtoupper(substr($user->name, 0, 2)) }}
+                            </span>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Email Address') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->email }}</dd>
+                            <h2 class="text-xl font-bold text-gray-900">{{ $user->name }}</h2>
+                            <p class="text-gray-600">{{ $user->email }}</p>
                         </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Role') }}</dt>
-                            <dd class="mt-1">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                    @if($user->role === 'admin') bg-red-100 text-red-800
-                                    @elseif($user->role === 'operation_manager') bg-purple-100 text-purple-800
-                                    @elseif($user->role === 'sales_manager') bg-blue-100 text-blue-800
-                                    @else bg-gray-100 text-gray-800 @endif">
-                                    {{ ucfirst(str_replace('_', ' ', $user->role)) }}
-                                </span>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Status') }}</dt>
-                            <dd class="mt-1">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                    @if($user->email_verified_at) bg-green-100 text-green-800
-                                    @else bg-yellow-100 text-yellow-800 @endif">
-                                    @if($user->email_verified_at)
-                                        {{ __('Verified') }}
-                                    @else
-                                        {{ __('Unverified') }}
-                                    @endif
-                                </span>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Phone') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->phone ?? __('Not provided') }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Date of Birth') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->date_of_birth ? $user->date_of_birth->format('M d, Y') : __('Not provided') }}</dd>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Address') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                @if($user->address)
-                                    {{ $user->address }}<br>
-                                    @if($user->city || $user->state || $user->postal_code)
-                                        {{ $user->city }}{{ $user->city && ($user->state || $user->postal_code) ? ', ' : '' }}
-                                        {{ $user->state }}{{ $user->state && $user->postal_code ? ' ' : '' }}
-                                        {{ $user->postal_code }}
-                                    @endif
-                                @else
-                                    {{ __('Not provided') }}
-                                @endif
-                            </dd>
-                        </div>
-                    </dl>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-4">
+                        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">{{ __('Role') }}</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                        @if($user->role === 'admin') bg-red-100 text-red-800
+                                        @elseif($user->role === 'operation_manager') bg-purple-100 text-purple-800
+                                        @elseif($user->role === 'sales_manager') bg-blue-100 text-blue-800
+                                        @else bg-gray-100 text-gray-800 @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $user->role)) }}
+                                    </span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">{{ __('Status') }}</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                        {{ $user->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $user->is_active ? __('Active') : __('Inactive') }}
+                                    </span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">{{ __('Joined') }}</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $user->created_at->format('M d, Y') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">{{ __('Last Login') }}</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    {{ $user->last_login_at ? $user->last_login_at->format('M d, Y H:i') : __('Never') }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Account Activity -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">{{ __('Account Activity') }}</h3>
-                </div>
-                <div class="px-6 py-4">
-                    <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Member Since') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->created_at->format('M d, Y H:i') }}</dd>
+        <!-- Stats -->
+        <div class="space-y-6">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Order Statistics') }}</h3>
+                    <dl class="grid grid-cols-1 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Total Orders') }}</dt>
+                            <dd class="mt-1 text-2xl font-semibold text-gray-900">{{ $totalOrders }}</dd>
                         </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Last Updated') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->updated_at->format('M d, Y H:i') }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Last Login') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->last_login_at ? $user->last_login_at->format('M d, Y H:i') : __('Never') }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">{{ __('Email Verified') }}</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $user->email_verified_at ? $user->email_verified_at->format('M d, Y H:i') : __('Not verified') }}</dd>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Total Spent') }}</dt>
+                            <dd class="mt-1 text-2xl font-semibold text-gray-900">${{ number_format($totalSpent, 2) }}</dd>
                         </div>
                     </dl>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">{{ __('Quick Actions') }}</h3>
-                </div>
-                <div class="px-6 py-4 space-y-3">
-                    <a href="{{ route('admin.users.edit', $user) }}" 
-                       class="w-full flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        {{ __('Edit Profile') }}
-                    </a>
-                    
-                    @if(!$user->email_verified_at)
-                        <form method="POST" action="{{ route('admin.users.verify', $user) }}">
-                            @csrf
-                            <button type="submit" class="w-full flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                {{ __('Verify Email') }}
-                            </button>
-                        </form>
-                    @endif
-                    
-                    @if($user->id !== auth()->id())
-                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" 
-                              onsubmit="return confirm('{{ __('Are you sure you want to delete this user?') }}')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="w-full flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                                {{ __('Delete User') }}
-                            </button>
-                        </form>
-                    @endif
-                </div>
+    <!-- Recent Orders -->
+    <div class="mt-6">
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Recent Orders') }}</h3>
+                @if($recentOrders->count() > 0)
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ __('Order ID') }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ __('Date') }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ __('Status') }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ __('Total') }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($recentOrders as $order)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            #{{ $order->id }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $order->created_at->format('M d, Y') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                                @if($order->status === 'completed') bg-green-100 text-green-800
+                                                @elseif($order->status === 'pending') bg-yellow-100 text-yellow-800
+                                                @elseif($order->status === 'cancelled') bg-red-100 text-red-800
+                                                @else bg-gray-100 text-gray-800 @endif">
+                                                {{ ucfirst($order->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            ${{ number_format($order->total_amount, 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-gray-500 text-center py-4">{{ __('No recent orders found.') }}</p>
+                @endif
             </div>
-
-            <!-- Statistics -->
-            @if($user->role === 'customer')
-                <div class="bg-white rounded-lg shadow">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900">{{ __('Customer Statistics') }}</h3>
-                    </div>
-                    <div class="px-6 py-4">
-                        <dl class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">{{ __('Total Orders') }}</dt>
-                                <dd class="mt-1 text-2xl font-bold text-gray-900">{{ $user->orders_count ?? 0 }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">{{ __('Total Spent') }}</dt>
-                                <dd class="mt-1 text-2xl font-bold text-gray-900">${{ number_format($user->total_spent ?? 0, 2) }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">{{ __('Average Order Value') }}</dt>
-                                <dd class="mt-1 text-lg font-semibold text-gray-900">${{ number_format($user->average_order_value ?? 0, 2) }}</dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 </div>

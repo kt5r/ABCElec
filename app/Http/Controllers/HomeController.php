@@ -44,7 +44,7 @@ class HomeController extends BaseController
             return Category::with(['products' => function ($query) {
                 $query->where('status', true)->limit(3);
             }])
-            ->where('status', true)
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();
         });
@@ -60,7 +60,7 @@ class HomeController extends BaseController
         $categoriesWithProducts = [];
         foreach (['kitchen', 'bathroom', 'living', 'other'] as $categorySlug) {
             $category = Category::where('slug', $categorySlug)
-                ->where('status', true)
+                ->where('is_active', true)
                 ->first();
             
             if ($category) {

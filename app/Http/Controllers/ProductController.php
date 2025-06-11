@@ -5,122 +5,167 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
-class ProductController extends Controller
+class ProductController extends BaseController
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->applyLocaleMiddleware();
+    }
     /**
      * Display a listing of products
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'images'])
-            ->where('is_active', true);
+        $query = Product::with('category');
 
-        // Filter by category
-        if ($request->has('category') && $request->category) {
-            $category = Category::where('slug', $request->category)->first();
-            if ($category) {
-                $query->where('category_id', $category->id);
-            }
-        }
-
-        // Search functionality
-        if ($request->has('search') && $request->search) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('description', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('short_description', 'LIKE', "%{$searchTerm}%");
+        // Filter by category if specified
+        if ($request->has('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category);
             });
         }
 
-        // Price range filter
-        if ($request->has('min_price') && $request->min_price) {
-            $query->where('price', '>=', $request->min_price);
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
-        if ($request->has('max_price') && $request->max_price) {
-            $query->where('price', '<=', $request->max_price);
+        $products = $query->latest()->paginate(10);
+        $categories = Category::where('is_active', true)->get();
+
+        return view('admin.products.index', compact('products', 'categories'));
+    }
+
+    /**
+     * Show the form for creating a new product.
+     */
+    public function create()
+    {
+        $categories = Category::where('is_active', true)->get();
+        return view('admin.products.create', compact('categories'));
+    }
+
+    /**
+     * Store a newly created product in storage.
+     */
+    public function store(ProductRequest $request)
+    {
+        $data = $request->validated();
+        
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $data['featured_image'] = $path;
         }
 
-        // Sorting
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-
-        switch ($sortBy) {
-            case 'price_low':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_high':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'popularity':
-                $query->orderBy('views_count', 'desc');
-                break;
-            default:
-                $query->orderBy($sortBy, $sortOrder);
+        // Generate slug if not provided
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['name']);
         }
 
-        $products = $query->paginate(12)->appends($request->all());
+        // Set default values
+        $data['manage_stock'] = $request->has('manage_stock');
+        $data['in_stock'] = $request->has('in_stock');
+        $data['featured'] = $request->has('featured');
+        $data['status'] = $request->has('status');
 
-        // Get categories for filter sidebar
-        $categories = Category::where('is_active', true)
-            ->withCount(['products' => function ($query) {
-                $query->where('is_active', true);
-            }])
-            ->orderBy('name')
-            ->get();
+        $product = Product::create($data);
 
-        // Get price range for filter
-        $priceRange = Product::where('is_active', true)
-            ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
-            ->first();
+        return redirect()
+            ->route('products.index')
+            ->with('success', __('Product created successfully.'));
+    }
 
-        return view('products.index', compact(
-            'products',
-            'categories',
-            'priceRange',
-            'request'
-        ));
+    /**
+     * Show the form for editing the specified product.
+     */
+    public function edit(Product $product)
+    {
+        $categories = Category::where('is_active', true)->get();
+        return view('admin.products.edit', compact('product', 'categories'));
+    }
+
+    /**
+     * Update the specified product in storage.
+     */
+    public function update(ProductRequest $request, Product $product)
+    {
+        $data = $request->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->featured_image) {
+                Storage::disk('public')->delete($product->featured_image);
+            }
+            $path = $request->file('image')->store('products', 'public');
+            $data['featured_image'] = $path;
+        }
+
+        // Set boolean values
+        $data['manage_stock'] = $request->has('manage_stock');
+        $data['in_stock'] = $request->has('in_stock');
+        $data['featured'] = $request->has('featured');
+        $data['status'] = $request->has('status');
+
+        $product->update($data);
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', __('Product updated successfully.'));
+    }
+
+    /**
+     * Remove the specified product from storage.
+     */
+    public function destroy(Product $product)
+    {
+        // Delete product image
+        if ($product->featured_image) {
+            Storage::disk('public')->delete($product->featured_image);
+        }
+
+        $product->delete();
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', __('Product deleted successfully.'));
     }
 
     /**
      * Display the specified product
      */
-    public function show(Product $product)
+    public function show($slug)
     {
+        $product = Product::where('slug', $slug)->first();
+
         // Check if product is active
-        if (!$product->is_active) {
+        if (!$product->status) {
             abort(404);
         }
 
-        // Increment view count
-        $product->increment('views_count');
-
-        // Load relationships
-        $product->load(['category', 'images', 'reviews.user']);
-
         // Get related products
-        $relatedProducts = Product::with(['category', 'images'])
+        $product->load(['category']);
+        
+        $relatedProducts = Product::with('category')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            ->where('is_active', true)
+            ->where('status', true)
             ->limit(4)
             ->get();
 
-        // Calculate average rating
-        $averageRating = $product->reviews()->avg('rating') ?? 0;
-        $reviewsCount = $product->reviews()->count();
-
-        return view('products.show', compact(
+        return view('product.show', compact(
             'product',
             'relatedProducts',
-            'averageRating',
-            'reviewsCount'
         ));
     }
 
@@ -136,7 +181,7 @@ class ProductController extends Controller
         $searchTerm = $request->q;
         
         $products = Product::with(['category'])
-            ->where('is_active', true)
+            ->where('status', true)
             ->where(function ($query) use ($searchTerm) {
                 $query->where('name', 'LIKE', "%{$searchTerm}%")
                       ->orWhere('description', 'LIKE', "%{$searchTerm}%");
@@ -162,7 +207,7 @@ class ProductController extends Controller
      */
     public function getProductDetails(Product $product)
     {
-        if (!$product->is_active) {
+        if (!$product->status) {
             return response()->json(['error' => 'Product not found'], 404);
         }
 
