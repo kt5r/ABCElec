@@ -51,13 +51,15 @@ class AdminController extends BaseController
             ->limit(10)
             ->get();
 
-        return view('admin.dashboard', compact(
-            'stats',
-            'recentOrders',
-            'lowStockProducts',
-            'salesData',
-            'topProducts',
-            'recentCustomers'
+        return view('admin.dashboard', array_merge(
+            $stats,
+            compact(
+                'recentOrders',
+                'lowStockProducts',
+                'salesData',
+                'topProducts',
+                'recentCustomers'
+            )
         ));
     }
 
@@ -342,23 +344,38 @@ class AdminController extends BaseController
 
     /**
      * Show the form for creating a new user.
+     *
+     * @return \Illuminate\View\View
      */
-    public function createUser()
+    public function create()
     {
-        return view('admin.users.create');
+        $this->authorize('create', User::class);
+
+        return view('admin.users.create', [
+            'roles' => [
+                'admin' => __('Admin'),
+                'operation_manager' => __('Operation Manager'),
+                'sales_manager' => __('Sales Manager'),
+                'customer' => __('Customer'),
+            ],
+        ]);
     }
 
     /**
      * Store a newly created user in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeUser(Request $request)
+    public function store(Request $request)
     {
+        $this->authorize('create', User::class);
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => ['required', Rule::in(['admin', 'operation_manager', 'sales_manager', 'customer'])],
-            'status' => 'required|boolean',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'in:admin,operation_manager,sales_manager,customer'],
         ]);
 
         $user = User::create([
@@ -366,10 +383,12 @@ class AdminController extends BaseController
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'is_active' => $validated['status'],
+            'is_active' => true,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        return redirect()
+            ->route('admin.users.show', $user)
+            ->with('success', __('User created successfully.'));
     }
 
     /**
@@ -384,6 +403,94 @@ class AdminController extends BaseController
             ->get();
 
         return view('admin.reports.index', compact('sales'));
+    }
+
+    /**
+     * Display a listing of orders
+     */
+    public function orders(Request $request)
+    {
+        $query = Order::with(['user'])
+            ->latest();
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter by status
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date range
+        if ($request->has('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->has('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
+
+        return view('admin.orders.index', compact('orders'));
+    }
+
+    /**
+     * Display a listing of users
+     */
+    public function users(Request $request)
+    {
+        $query = User::with('role')
+            ->latest();
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by role
+        if ($request->has('role')) {
+            $query->where('role', $request->role);
+        }
+
+        // Filter by status
+        if ($request->has('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+
+        $users = $query->paginate(10)->withQueryString();
+
+        return view('admin.users.index', compact('users'));
+    }
+
+    /**
+     * Display the specified user's details.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\View\View
+     */
+    public function showUser(User $user)
+    {
+        $this->authorize('view', $user);
+
+        return view('admin.users.show', [
+            'user' => $user,
+            'recentOrders' => $user->orders()->latest()->take(5)->get(),
+            'totalOrders' => $user->orders()->count(),
+            'totalSpent' => $user->orders()->sum('total_amount'),
+        ]);
     }
 
 }

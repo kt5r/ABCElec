@@ -35,69 +35,13 @@ class CategoryController extends BaseController
     /**
      * Display the specified category and its products
      */
-    public function show($slug, Request $request)
+    public function show(Category $category)
     {
-        $category = Category::where('slug', $slug)->first();
+        $category->load(['products' => function ($query) {
+            $query->latest()->take(5);
+        }]);
         
-        // Check if category is active
-        if (!$category->is_active) {
-            abort(404);
-        }
-
-        $query = Product::where('category_id', $category->id)
-            ->where('status', true);
-
-        // Search within category
-        if ($request->has('search') && $request->search) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('description', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('short_description', 'LIKE', "%{$searchTerm}%");
-            });
-        }
-
-        // Price range filter
-        if ($request->has('min_price') && $request->min_price) {
-            $query->where('price', '>=', $request->min_price);
-        }
-
-        if ($request->has('max_price') && $request->max_price) {
-            $query->where('price', '<=', $request->max_price);
-        }
-
-        // Sorting
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-
-        switch ($sortBy) {
-            case 'price_low':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_high':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            default:
-                $query->orderBy($sortBy, $sortOrder);
-        }
-
-        $products = $query->paginate(12)->appends($request->all());
-
-        // Get price range for this category
-        $priceRange = Product::where('category_id', $category->id)
-            ->where('status', true)
-            ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
-            ->first();
-
-        return view('category.show', compact(
-            'category',
-            'products',
-            'priceRange',
-            'request'
-        ));
+        return view('admin.categories.show', compact('category'));
     }
 
     /**

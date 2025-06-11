@@ -95,7 +95,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
     
     // Category management
-    Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('categories', CategoryController::class);
     Route::post('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
     
     // Order management
@@ -118,7 +118,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 // Sales Manager routes
-Route::middleware(['auth', 'role:sales_manager'])->prefix('sales')->name('sales.')->group(function () {
+Route::middleware(['auth', 'can:view-sales-reports'])->prefix('sales')->name('sales.')->group(function () {
     Route::get('/', [AdminController::class, 'salesDashboard'])->name('dashboard');
     Route::get('/reports/daily', [AdminController::class, 'dailySalesReport'])->name('reports.daily');
     Route::get('/reports/export', [AdminController::class, 'exportDailySales'])->name('reports.export');
@@ -126,8 +126,8 @@ Route::middleware(['auth', 'role:sales_manager'])->prefix('sales')->name('sales.
 });
 
 // Sales Reports Routes
-Route::middleware(['auth', 'role:admin,operation_manager,sales_manager'])->group(function () {
-    Route::get('/admin/reports/sales', [SalesReportController::class, 'index'])->name('admin.reports.sales');
+Route::middleware(['auth', 'can:view-sales-reports'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
 });
 
 // API routes for AJAX calls
@@ -136,6 +136,11 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     Route::get('/categories/active', [CategoryController::class, 'active'])->name('categories.active');
     Route::post('/cart/quick-add', [CartController::class, 'quickAdd'])->name('cart.quick-add');
 });
+
+// Authentication Routes
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
 
 // Fallback route
 Route::fallback(function () {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'ABC Electronics'))</title>
+    <title>@yield('title', 'ABCElec')</title>
     <meta name="description" content="@yield('description', 'ABC Private LTD - Electronics Retailer offering Kitchen, Bathroom, Living, and Other electronic products.')">
     <meta name="keywords" content="@yield('keywords', 'electronics, kitchen appliances, bathroom accessories, living room electronics, ABC')">
 
@@ -36,8 +36,8 @@
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                            <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-8 w-auto" onerror="this.style.display='none'">
-                            <span class="font-bold text-xl text-gray-900">{{ config('app.name') }}</span>
+                            <img src="{{ asset('logo.png') }}" alt="ABCElec" class="h-8 w-auto" onerror="this.style.display='none'">
+                            <span class="font-bold text-xl text-gray-900">ABCElec</span>
                         </a>
                     </div>
 
@@ -146,12 +146,12 @@
                                     </a>
                                 @endif
                                 <div class="border-t my-1"></div>
-                                {{-- <form method="POST" action="{{ route('logout') }}">
+                                <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                                         {{ __('messages.logout') }}
                                     </button>
-                                </form> --}}
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -288,7 +288,7 @@
                             @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
                                 <li>
                                     <a href="{{ route('category.show', $category) }}" class="text-gray-300 hover:text-white transition-colors">
-                                        {{ __('messages.category_' . $category) }}
+                                        {{ __('messages.' . $category) }}
                                     </a>
                                 </li>
                             @endforeach

@@ -45,7 +45,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Products') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ $totalProducts ?? 0 }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $total_products ?? 0 }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Orders') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ $totalOrders ?? 0 }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $total_orders ?? 0 }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Users') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ $totalUsers ?? 0 }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $total_customers ?? 0 }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Revenue') }}</dt>
-                                <dd class="text-lg font-medium text-gray-900">${{ number_format($totalRevenue ?? 0, 2) }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">${{ number_format($total_revenue ?? 0, 2) }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -146,7 +146,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 gap-8">
             <!-- Recent Orders -->
             <div class="bg-white shadow rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
@@ -193,64 +193,6 @@
                     <div class="mt-6">
                         <a href="{{ route('admin.orders.index') }}" class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                             {{ __('View all orders') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product Categories Overview -->
-            <div class="bg-white shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                        {{ __('Product Categories') }}
-                    </h3>
-                    @if(isset($categoryStats) && count($categoryStats) > 0)
-                        <div class="space-y-4">
-                            @foreach($categoryStats as $category => $count)
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
-                                        @switch($category)
-                                            @case('Kitchen')
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 10h18m-9 4h9m-9 4h9M3 14h6m-6 4h6"></path>
-                                                </svg>
-                                                @break
-                                            @case('Bathroom')
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
-                                                </svg>
-                                                @break
-                                            @case('Living')
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"></path>
-                                                </svg>
-                                                @break
-                                            @default
-                                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                                                </svg>
-                                        @endswitch
-                                    </div>
-                                    <span class="text-sm font-medium text-gray-900">{{ __($category) }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <span class="text-sm text-gray-500 mr-2">{{ $count }} {{ __('products') }}</span>
-                                    <a href="{{ route('categories.show', strtolower($category)) }}" class="text-indigo-600 hover:text-indigo-500">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-gray-500 text-center py-4">{{ __('No categories found') }}</p>
-                    @endif
-                    <div class="mt-6">
-                        <a href="{{ route('admin.categories.index') }}" class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            {{ __('Manage categories') }}
                         </a>
                     </div>
                 </div>

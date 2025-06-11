@@ -27,7 +27,14 @@ class RoleMiddleware
             return redirect()->route('login')->with('error', 'Your account has been deactivated.');
         }
 
-        if (!in_array($user->role, $roles)) {
+        // Split roles if they are comma-separated
+        $allowedRoles = collect($roles)->flatMap(function ($role) {
+            return explode(',', $role);
+        })->map(function ($role) {
+            return trim($role);
+        })->toArray();
+
+        if (!in_array($user->role, $allowedRoles)) {
             abort(403, 'Unauthorized access.');
         }
 

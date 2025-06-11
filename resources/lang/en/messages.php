@@ -236,4 +236,10 @@ return [
     'need_help' => 'Need Help?',
     'payment_help_text' => 'If you\'re having trouble completing your payment, our support team is here to help.',
     'contact_support' => 'Contact Support',
+
+    // Common
+    'common' => [
+        'view_product' => 'View Product',
+        'products' => 'Products',
+    ],
 ];
