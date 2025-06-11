@@ -140,12 +140,12 @@
                                     </a>
                                 @endif
                                 <div class="border-t my-1"></div>
-                                <form method="POST" action="{{ route('logout') }}">
+                                {{-- <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                                         {{ __('messages.logout') }}
                                     </button>
-                                </form>
+                                </form> --}}
                             </div>
                         </div>
                     </div>

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends BaseController
 {
@@ -17,74 +20,125 @@ class ProductController extends BaseController
      */
     public function index(Request $request)
     {
-        $query = Product::with('category')->where('status', true);
+        $query = Product::with('category');
 
-        // Filter by category
-        if ($request->has('category') && $request->category) {
-            $category = Category::where('slug', $request->category)->first();
-            if ($category) {
-                $query->where('category_id', $category->id);
-            }
-        }
-
-        // Search functionality
-        if ($request->has('search') && $request->search) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('description', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('short_description', 'LIKE', "%{$searchTerm}%");
+        // Filter by category if specified
+        if ($request->has('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category);
             });
         }
 
-        // Price range filter
-        if ($request->has('min_price') && $request->min_price) {
-            $query->where('price', '>=', $request->min_price);
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
-        if ($request->has('max_price') && $request->max_price) {
-            $query->where('price', '<=', $request->max_price);
+        $products = $query->latest()->paginate(10);
+        $categories = Category::where('is_active', true)->get();
+
+        return view('admin.products.index', compact('products', 'categories'));
+    }
+
+    /**
+     * Show the form for creating a new product.
+     */
+    public function create()
+    {
+        $categories = Category::where('status', true)->get();
+        return view('admin.products.create', compact('categories'));
+    }
+
+    /**
+     * Store a newly created product in storage.
+     */
+    public function store(ProductRequest $request)
+    {
+        $data = $request->validated();
+        
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $data['featured_image'] = $path;
         }
 
-        // Sorting
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-
-        switch ($sortBy) {
-            case 'price_low':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_high':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            default:
-                $query->orderBy($sortBy, $sortOrder);
+        // Generate slug if not provided
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['name']);
         }
 
-        $products = $query->paginate(12)->appends($request->all());
+        // Set default values
+        $data['manage_stock'] = $request->has('manage_stock');
+        $data['in_stock'] = $request->has('in_stock');
+        $data['featured'] = $request->has('featured');
+        $data['status'] = $request->has('status');
 
-        // Get categories for filter sidebar
-        $categories = Category::where('is_active', true)
-            ->withCount(['products' => function ($query) {
-                $query->where('status', true);
-            }])
-            ->orderBy('name')
-            ->get();
+        $product = Product::create($data);
 
-        // Get price range for filter
-        $priceRange = Product::where('status', true)
-            ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
-            ->first();
+        return redirect()
+            ->route('products.index')
+            ->with('success', __('Product created successfully.'));
+    }
 
-        return view('product.index', compact(
-            'products',
-            'categories',
-            'priceRange',
-            'request'
-        ));
+    /**
+     * Show the form for editing the specified product.
+     */
+    public function edit(Product $product)
+    {
+        $categories = Category::where('is_active', true)->get();
+        return view('admin.products.edit', compact('product', 'categories'));
+    }
+
+    /**
+     * Update the specified product in storage.
+     */
+    public function update(ProductRequest $request, Product $product)
+    {
+        $data = $request->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->featured_image) {
+                Storage::disk('public')->delete($product->featured_image);
+            }
+            $path = $request->file('image')->store('products', 'public');
+            $data['featured_image'] = $path;
+        }
+
+        // Set boolean values
+        $data['manage_stock'] = $request->has('manage_stock');
+        $data['in_stock'] = $request->has('in_stock');
+        $data['featured'] = $request->has('featured');
+        $data['status'] = $request->has('status');
+
+        $product->update($data);
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', __('Product updated successfully.'));
+    }
+
+    /**
+     * Remove the specified product from storage.
+     */
+    public function destroy(Product $product)
+    {
+        // Delete product image
+        if ($product->featured_image) {
+            Storage::disk('public')->delete($product->featured_image);
+        }
+
+        $product->delete();
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', __('Product deleted successfully.'));
     }
 
     /**

@@ -6,128 +6,265 @@
 <div class="container mx-auto px-4 py-8">
     <!-- Page Header -->
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">{{ __('Our Products') }}</h1>
+        <h1 class="text-3xl font-bold text-gray-900">{{ __('Products') }}</h1>
         
         @can('create', App\Models\Product::class)
-            <a href="{{ route('products.create') }}" 
+            <a href="{{ route('admin.products.create') }}" 
                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium transition duration-200">
                 {{ __('Add New Product') }}
             </a>
         @endcan
     </div>
 
-    <!-- Category Filter -->
-    <div class="mb-8">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">{{ __('Categories') }}</h2>
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ route('products.index') }}" 
-               class="px-4 py-2 rounded-full {{ !request('category') ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} transition duration-200">
-                {{ __('All') }}
-            </a>
-            @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
-                <a href="{{ route('products.index', ['category' => $category]) }}" 
-                   class="px-4 py-2 rounded-full {{ request('category') == $category ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} transition duration-200">
-                    {{ __(ucfirst($category)) }}
-                </a>
-            @endforeach
-        </div>
+    <!-- Search and Filters -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <form action="{{ route('admin.products.index') }}" method="GET" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Search -->
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ __('Search') }}
+                    </label>
+                    <input type="text" 
+                           id="search" 
+                           name="search" 
+                           value="{{ request('search') }}"
+                           placeholder="{{ __('Search by name, SKU...') }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <!-- Category Filter -->
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ __('Category') }}
+                    </label>
+                    <select id="category" 
+                            name="category"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">{{ __('All Categories') }}</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ __('Status') }}
+                    </label>
+                    <select id="status" 
+                            name="status"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">{{ __('All Status') }}</option>
+                        <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" 
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    {{ __('Apply Filters') }}
+                </button>
+            </div>
+        </form>
     </div>
 
-    <!-- Products Grid -->
-    @if($products->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @foreach($products as $product)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <!-- Product Image -->
-                    <div class="h-48 bg-gray-200 flex items-center justify-center">
-                        @if($product->image)
-                            <img src="{{ Storage::url($product->image) }}" 
-                                 alt="{{ $product->name }}" 
-                                 class="w-full h-full object-cover">
-                        @else
-                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                        @endif
-                    </div>
-
-                    <!-- Product Details -->
-                    <div class="p-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">{{ $product->name }}</h3>
-                            @can('update', $product)
-                                <div class="flex space-x-1">
-                                    <a href="{{ route('products.edit', $product) }}" 
-                                       class="text-indigo-600 hover:text-indigo-900 p-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                        </svg>
-                                    </a>
-                                    @can('delete', $product)
-                                        <form method="POST" action="{{ route('products.destroy', $product) }}" class="inline" onsubmit="return confirm('{{ __('Are you sure?') }}')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 p-1">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    @endcan
-                                </div>
-                            @endcan
-                        </div>
-                        
-                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ $product->description }}</p>
-                        
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-2xl font-bold text-indigo-600">${{ number_format($product->price, 2) }}</span>
-                            <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                                {{ __(ucfirst($product->category)) }}
-                            </span>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">
-                                {{ __('Stock') }}: {{ $product->stock_quantity }}
-                            </span>
-                            
-                            @auth
-                                @if($product->stock_quantity > 0)
-                                    <form method="POST" action="{{ route('cart.add', $product) }}" class="inline">
-                                        @csrf
-                                        <button type="submit" 
-                                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-sm font-medium transition duration-200">
-                                            {{ __('Add to Cart') }}
-                                        </button>
-                                    </form>
+    <!-- Products Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('messages.product') }}
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('Category') }}
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('Price') }}
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('Stock') }}
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('Status') }}
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('Actions') }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @forelse($products as $product)
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                @if($product->featured_image)
+                                    <img src="{{ Storage::url($product->featured_image) }}" 
+                                         alt="{{ $product->name }}" 
+                                         class="w-10 h-10 rounded-full object-cover">
                                 @else
-                                    <span class="text-red-500 text-sm font-medium">{{ __('Out of Stock') }}</span>
+                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <span class="text-gray-500 text-xs">{{ __('No Image') }}</span>
+                                    </div>
                                 @endif
-                            @else
-                                <a href="{{ route('login') }}" 
-                                   class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded-md text-sm font-medium transition duration-200">
-                                    {{ __('Login to Buy') }}
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $product->name }}
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        {{ $product->sku }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->category->name }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                @if($product->sale_price)
+                                    <span class="line-through text-gray-500">{{ number_format($product->price, 2) }}</span>
+                                    <span class="text-red-600">{{ number_format($product->sale_price, 2) }}</span>
+                                @else
+                                    {{ number_format($product->price, 2) }}
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                @if($product->manage_stock)
+                                    {{ $product->stock_quantity }}
+                                @else
+                                    <span class="text-gray-500">{{ __('N/A') }}</span>
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $product->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $product->status ? __('Active') : __('Inactive') }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end space-x-2">
+                                <a href="{{ route('admin.products.edit', $product) }}" 
+                                   class="text-indigo-600 hover:text-indigo-900">
+                                    {{ __('Edit') }}
                                 </a>
-                            @endauth
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+                                <form action="{{ route('admin.products.destroy', $product) }}" 
+                                      method="POST" 
+                                      class="inline-block"
+                                      onsubmit="return confirm('{{ __('Are you sure you want to delete this product?') }}');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900">
+                                        {{ __('Delete') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            {{ __('No products found.') }}
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-        <!-- Pagination -->
-        <div class="mt-8">
-            {{ $products->links() }}
+    <!-- Pagination -->
+    <div class="mt-6">
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div class="flex-1 flex justify-between sm:hidden">
+                @if($products->onFirstPage())
+                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-gray-50 cursor-not-allowed">
+                        {{ __('Previous') }}
+                    </span>
+                @else
+                    <a href="{{ $products->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        {{ __('Previous') }}
+                    </a>
+                @endif
+
+                @if($products->hasMorePages())
+                    <a href="{{ $products->nextPageUrl() }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        {{ __('Next') }}
+                    </a>
+                @else
+                    <span class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-gray-50 cursor-not-allowed">
+                        {{ __('Next') }}
+                    </span>
+                @endif
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        {{ __('Showing') }}
+                        <span class="font-medium">{{ $products->firstItem() }}</span>
+                        {{ __('to') }}
+                        <span class="font-medium">{{ $products->lastItem() }}</span>
+                        {{ __('of') }}
+                        <span class="font-medium">{{ $products->total() }}</span>
+                        {{ __('results') }}
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        @if($products->onFirstPage())
+                            <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-50 text-sm font-medium text-gray-500 cursor-not-allowed">
+                                <span class="sr-only">{{ __('Previous') }}</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        @else
+                            <a href="{{ $products->previousPageUrl() }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="sr-only">{{ __('Previous') }}</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        @endif
+
+                        @foreach($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                            @if($page == $products->currentPage())
+                                <span class="relative inline-flex items-center px-4 py-2 border border-indigo-500 bg-indigo-50 text-sm font-medium text-indigo-600">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+
+                        @if($products->hasMorePages())
+                            <a href="{{ $products->nextPageUrl() }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="sr-only">{{ __('Next') }}</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        @else
+                            <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-50 text-sm font-medium text-gray-500 cursor-not-allowed">
+                                <span class="sr-only">{{ __('Next') }}</span>
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        @endif
+                    </nav>
+                </div>
+            </div>
         </div>
-    @else
-        <div class="text-center py-12">
-            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-            </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('No products found') }}</h3>
-            <p class="text-gray-500">{{ __('Try adjusting your search or filter to find what you\'re looking for.') }}</p>
-        </div>
-    @endif
+    </div>
 </div>
 @endsection

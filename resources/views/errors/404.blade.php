@@ -40,7 +40,7 @@
                     {{ __('messages.categories') }}
                 </a>
                 @auth
-                    <a href="{{ route('profile.orders') }}" class="text-blue-600 hover:text-blue-800">
+                    <a href="{{ route('profile.show') }}" class="text-blue-600 hover:text-blue-800">
                         {{ __('messages.profile') }}
                     </a>
                     <a href="{{ route('admin.orders.index') }}" class="text-blue-600 hover:text-blue-800">

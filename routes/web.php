@@ -12,50 +12,43 @@ use App\Http\Controllers\{
     LanguageController
 };
 use Illuminate\Support\Facades\Route;
-use PHPUnit\Framework\Attributes\After;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
 
-
 // Language switching
-// Route::get('/language/{locale}', [LanguageController::class, 'switchLanguage'])->name('language.switch');
-// In your web.php routes file
-
 Route::get('/language/{locale}', function ($locale) {
-    // Validate locale
     if (in_array($locale, ['en', 'si'])) {
-        // Store in session
         session(['locale' => $locale]);
-        
-        // Set for current request
         app()->setLocale($locale);
-        
-        // Optional: Add flash message to verify switch
         session()->flash('locale_changed', 'Language changed to ' . ($locale === 'si' ? 'Sinhala' : 'English'));
     }
-    
     return redirect()->back();
 })->name('language.switch');
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
 
 // Authentication routes
 require __DIR__.'/auth.php';
 
-// Guest routes (for registration, login, etc.)
+// Guest routes
 Route::middleware('guest')->group(function () {
     // Additional guest routes if needed
 });
 
 // Authenticated user routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
@@ -92,10 +85,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-
 // Admin routes
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
     // Product management
@@ -125,7 +116,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('reports/users', [AdminController::class, 'usersReport'])->name('reports.users');
 });
 
-// Sales Manager routes (limited access)
+// Sales Manager routes
 Route::middleware(['auth', 'role:sales_manager'])->prefix('sales')->name('sales.')->group(function () {
     Route::get('/', [AdminController::class, 'salesDashboard'])->name('dashboard');
     Route::get('/reports/daily', [AdminController::class, 'dailySalesReport'])->name('reports.daily');
@@ -144,13 +135,3 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
 Route::fallback(function () {
     return view('errors.404');
 });
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Product listing (all products)
-Route::get('/products', [ProductController::class, 'index'])->name('product.index');
-
-Route::get('/terms', function () {
-    return view('terms');
-})->name('terms');
