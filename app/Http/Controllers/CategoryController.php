@@ -7,8 +7,12 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->applyLocaleMiddleware();
+    }
     /**
      * Display a listing of categories
      */

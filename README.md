@@ -1,4 +1,4 @@
-# CABC Electronics Store
+# ABC Electronics Store
 
 A full-stack e-commerce web application built with Laravel, featuring multi-language support, role-based access control, and comprehensive product management system.
 
@@ -278,4 +278,4 @@ For support, email support@cabc.lk or create an issue on GitHub.
 
 ---
 
-**CABC Private LTD** - Your Electronics Partner
+**ABC Private LTD** - Your Electronics Partner

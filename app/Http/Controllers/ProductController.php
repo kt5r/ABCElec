@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Support\Facades\Cache;
 
-class ProductController extends Controller
+class ProductController extends BaseController
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->applyLocaleMiddleware();
+    }
     /**
      * Display a listing of products
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'images'])
-            ->where('is_active', true);
+        $query = Product::with('category')->where('status', true);
 
         // Filter by category
         if ($request->has('category') && $request->category) {
@@ -67,17 +69,17 @@ class ProductController extends Controller
         // Get categories for filter sidebar
         $categories = Category::where('is_active', true)
             ->withCount(['products' => function ($query) {
-                $query->where('is_active', true);
+                $query->where('status', true);
             }])
             ->orderBy('name')
             ->get();
 
         // Get price range for filter
-        $priceRange = Product::where('is_active', true)
+        $priceRange = Product::where('status', true)
             ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
             ->first();
 
-        return view('products.index', compact(
+        return view('product.index', compact(
             'products',
             'categories',
             'priceRange',
@@ -125,7 +127,7 @@ class ProductController extends Controller
         $searchTerm = $request->q;
         
         $products = Product::with(['category'])
-            ->where('is_active', true)
+            ->where('status', true)
             ->where(function ($query) use ($searchTerm) {
                 $query->where('name', 'LIKE', "%{$searchTerm}%")
                       ->orWhere('description', 'LIKE', "%{$searchTerm}%");
@@ -151,7 +153,7 @@ class ProductController extends Controller
      */
     public function getProductDetails(Product $product)
     {
-        if (!$product->is_active) {
+        if (!$product->status) {
             return response()->json(['error' => 'Product not found'], 404);
         }
 

@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'CABC Electronics'))</title>
-    <meta name="description" content="@yield('description', 'CABC Private LTD - Electronics Retailer offering Kitchen, Bathroom, Living, and Other electronic products.')">
-    <meta name="keywords" content="@yield('keywords', 'electronics, kitchen appliances, bathroom accessories, living room electronics, CABC')">
+    <title>@yield('title', config('app.name', 'ABC Electronics'))</title>
+    <meta name="description" content="@yield('description', 'ABC Private LTD - Electronics Retailer offering Kitchen, Bathroom, Living, and Other electronic products.')">
+    <meta name="keywords" content="@yield('keywords', 'electronics, kitchen appliances, bathroom accessories, living room electronics, ABC')">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -111,51 +111,54 @@
                         @endauth
 
                         <!-- User Menu -->
-                        @auth
-                            <div class="relative group">
-                                <button class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
-                                    <div class="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                        {{ substr(auth()->user()->name, 0, 1) }}
-                                    </div>
-                                    <span class="hidden sm:block text-sm font-medium">{{ auth()->user()->name }}</span>
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </button>
-                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                    <div class="py-1">
-                                        <a href="{{ route('profile.orders') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                            {{ __('messages.profile') }}
-                                        </a>
-                                        <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                            {{ __('messages.orders') }}
-                                        </a>
-                                        @if(auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
-                                            <div class="border-t my-1"></div>
-                                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                                {{ __('messages.dashboard') }}
-                                            </a>
-                                        @endif
-                                        <div class="border-t my-1"></div>
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                                {{ __('messages.logout') }}
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+                @auth
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
+                            <div class="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                {{ substr(auth()->user()->name, 0, 1) }}
                             </div>
-                        @else
-                            <div class="flex items-center space-x-2">
-                                <a href="{{ route('login') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                    {{ __('messages.login') }}
+                            <span class="hidden sm:block text-sm font-medium">{{ auth()->user()->name }}</span>
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-1">
+                                <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                    {{ __('messages.profile') }}
                                 </a>
-                                <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                                    {{ __('messages.register') }}
+                                <a href="{{ route('profile.order-history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                    {{ __('messages.order_history') }}
                                 </a>
+                                @if(auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
+                                    <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        {{ __('messages.manage_orders') }}
+                                    </a>
+                                    <div class="border-t my-1"></div>
+                                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        {{ __('messages.dashboard') }}
+                                    </a>
+                                @endif
+                                <div class="border-t my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        {{ __('messages.logout') }}
+                                    </button>
+                                </form>
                             </div>
-                        @endauth
+                        </div>
+                    </div>
+                @else
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('login') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            {{ __('messages.login') }}
+                        </a>
+                        <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            {{ __('messages.register') }}
+                        </a>
+                    </div>
+                @endauth
 
                         <!-- Mobile menu button -->
                         <button type="button" class="md:hidden text-gray-700 hover:text-blue-600 transition-colors" id="mobile-menu-button">

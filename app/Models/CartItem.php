@@ -18,7 +18,9 @@ class CartItem extends Model
     protected $fillable = [
         'user_id',
         'product_id',
-        'quantity'
+        'quantity',
+        'price',
+        'subtotal',
     ];
 
     /**
@@ -27,11 +29,12 @@ class CartItem extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'quantity' => 'integer'
+        'quantity' => 'integer',
+        'price' => 'decimal:2'
     ];
 
     /**
-     * Get the user that owns the cart item
+     * Get the user that owns the cart item.
      */
     public function user(): BelongsTo
     {
@@ -39,7 +42,7 @@ class CartItem extends Model
     }
 
     /**
-     * Get the product that owns the cart item
+     * Get the product that owns the cart item.
      */
     public function product(): BelongsTo
     {

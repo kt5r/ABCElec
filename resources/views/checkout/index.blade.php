@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', __('Checkout'))
+@section('title', __('messages.checkout'))
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-6xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">{{ __('Checkout') }}</h1>
+            <h1 class="text-3xl font-bold text-gray-900">{{ __('messages.checkout') }}</h1>
             <div class="mt-4 flex items-center space-x-4 text-sm text-gray-600">
                 <span class="flex items-center">
                     <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-medium mr-2">1</span>
@@ -202,7 +202,7 @@
                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
                                     <span class="ml-2 text-sm text-gray-700">{{ __('Credit/Debit Card') }}</span>
                                 </label>
-                                <label class="flex items-center">
+                                {{-- <label class="flex items-center">
                                     <input type="radio" name="payment_method" value="paypal" 
                                            {{ old('payment_method') == 'paypal' ? 'checked' : '' }}
                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
@@ -213,7 +213,7 @@
                                            {{ old('payment_method') == 'bank_transfer' ? 'checked' : '' }}
                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
                                     <span class="ml-2 text-sm text-gray-700">{{ __('Bank Transfer') }}</span>
-                                </label>
+                                </label> --}}
                             </div>
                         </div>
 
@@ -319,7 +319,7 @@
                         </div>
                     </div>
 
-                    <!-- Terms and Conditions -->
+                    {{-- <!-- Terms and Conditions -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex items-start">
                             <input type="checkbox" 
@@ -332,14 +332,12 @@
                                 {{ __('I have read and agree to the') }}
                                 <a href="{{ route('terms') }}" target="_blank" class="text-indigo-600 hover:text-indigo-500 underline">{{ __('Terms and Conditions') }}</a>
                                 {{ __('and') }}
-                                <a href="{{ route('privacy') }}" target="_blank" class="text-indigo-600 hover:text-indigo-500 underline">{{ __('Privacy Policy') }}</a>
-                                <span class="text-red-500">*</span>
                             </label>
                         </div>
                         @error('terms_accepted')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
                 </form>
             </div>
 
@@ -392,10 +390,10 @@
                                 @endif
                             </span>
                         </div>
-                        <div class="flex justify-between text-sm">
+                        {{-- <div class="flex justify-between text-sm">
                             <span class="text-gray-600">{{ __('Tax') }}</span>
                             <span class="text-gray-900">${{ number_format($tax ?? 0, 2) }}</span>
-                        </div>
+                        </div> --}}
                         <div class="border-t pt-2 flex justify-between text-base font-semibold">
                             <span class="text-gray-900">{{ __('Total') }}</span>
                             <span class="text-gray-900">${{ number_format($total ?? 0, 2) }}</span>
@@ -411,13 +409,6 @@
                         </button>
                     </div>
 
-                    <!-- Security Badge -->
-                    <div class="mt-4 flex items-center justify-center text-xs text-gray-500">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                        {{ __('Secure checkout powered by SSL encryption') }}
-                    </div>
                 </div>
             </div>
         </div>

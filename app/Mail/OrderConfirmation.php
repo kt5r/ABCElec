@@ -20,7 +20,7 @@ class OrderConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Confirmation - CABC Private LTD',
+            subject: 'Order Confirmation - ABC Private LTD',
         );
     }
 

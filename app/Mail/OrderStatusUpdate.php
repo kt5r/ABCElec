@@ -21,7 +21,7 @@ class OrderStatusUpdate extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Status Update - CABC Private LTD',
+            subject: 'Order Status Update - ABC Private LTD',
         );
     }
 

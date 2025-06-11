@@ -11,15 +11,23 @@ class Role extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'display_name',
         'description',
     ];
 
-    public function users(): HasMany
+    /**
+     * Get the users that belong to the role.
+     */
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class);
     }
 
     public function permissions(): BelongsToMany

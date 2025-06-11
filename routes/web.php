@@ -54,20 +54,25 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated user routes
-Route::middleware(['auth', 'verified', 'check.user.status'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Profile management
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::get('/profile', 'show')->name('profile.show');
+        Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
+        Route::patch('/profile/password', 'updatePassword')->name('profile.update-password');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
-        Route::get('/profile/orders', 'orders')->name('profile.orders');
-        Route::get('/profile/order/{order}', 'showOrder')->name('profile.order.show');
+        // Order history and details
+        Route::get('/profile/orders', 'orderHistory')->name('profile.order-history');
+        Route::get('/profile/orders/{order}', 'orderDetails')->name('profile.order-details');
+        Route::patch('/profile/orders/{order}/cancel', 'cancelOrder')->name('profile.order-cancel');
+        Route::get('/profile/orders/{order}/invoice', 'orderInvoice')->name('profile.order-invoice');
     });
-    
+
     // Shopping Cart
     Route::controller(CartController::class)->group(function () {
         Route::get('/cart', 'index')->name('cart.index');
@@ -87,8 +92,9 @@ Route::middleware(['auth', 'verified', 'check.user.status'])->group(function () 
     });
 });
 
+
 // Admin routes
-Route::middleware(['auth', 'role:admin,operation_manager'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
@@ -144,3 +150,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 // Product listing (all products)
 Route::get('/products', [ProductController::class, 'index'])->name('product.index');
+
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');

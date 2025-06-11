@@ -31,6 +31,7 @@ class CartItemSeeder extends Seeder
                         'quantity' => rand(1, 3),
                         'created_at' => now(),
                         'updated_at' => now(),
+                        'price' => "0.00"
                     ]);
                 }
             }
