@@ -75,6 +75,9 @@
                         <a href="{{ route('admin.products.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             {{ __('messages.products') }}
                         </a>
+                        <a href="{{ route('admin.reports.sales') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            View Sales Report
+                        </a>
                     </div>
 
                     <!-- Right Side -->
