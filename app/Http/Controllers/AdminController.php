@@ -34,7 +34,7 @@ class AdminController extends BaseController
 
         // Get low stock products
         $lowStockProducts = Product::where('stock_quantity', '<=', 10)
-            ->where('is_active', true)
+            ->where('status', true)
             ->orderBy('stock_quantity', 'asc')
             ->limit(10)
             ->get();
@@ -46,7 +46,7 @@ class AdminController extends BaseController
         $topProducts = $this->getTopSellingProducts();
 
         // Get recent customers
-        $recentCustomers = User::where('role', 'customer')
+        $recentCustomers = User::where('role_id', '2')
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
@@ -93,16 +93,16 @@ class AdminController extends BaseController
 
             // Products
             'total_products' => Product::count(),
-            'active_products' => Product::where('is_active', true)->count(),
+            'active_products' => Product::where('status', true)->count(),
             'low_stock_products' => Product::where('stock_quantity', '<=', 10)->count(),
             'out_of_stock_products' => Product::where('stock_quantity', 0)->count(),
 
             // Customers
-            'total_customers' => User::where('role', 'customer')->count(),
-            'new_customers_today' => User::where('role', 'customer')
+            'total_customers' => User::where('role_id', '2')->count(),
+            'new_customers_today' => User::where('role_id', '2')
                 ->whereDate('created_at', $today)
                 ->count(),
-            'new_customers_this_month' => User::where('role', 'customer')
+            'new_customers_this_month' => User::where('role_id', '2')
                 ->where('created_at', '>=', $thisMonth)
                 ->count(),
 
@@ -171,7 +171,7 @@ class AdminController extends BaseController
             'revenue' => Order::where('payment_status', 'paid')
                 ->where('created_at', '>=', $thisMonth)
                 ->sum('total_amount'),
-            'customers' => User::where('role', 'customer')
+            'customers' => User::where('role_id', '2')
                 ->where('created_at', '>=', $thisMonth)
                 ->count(),
         ];
@@ -181,7 +181,7 @@ class AdminController extends BaseController
             'revenue' => Order::where('payment_status', 'paid')
                 ->whereBetween('created_at', [$lastMonth, $lastMonthEnd])
                 ->sum('total_amount'),
-            'customers' => User::where('role', 'customer')
+            'customers' => User::where('role_id', '2')
                 ->whereBetween('created_at', [$lastMonth, $lastMonthEnd])
                 ->count(),
         ];
@@ -294,7 +294,7 @@ class AdminController extends BaseController
      */
     private function exportCustomersData($format)
     {
-        $customers = User::where('role', 'customer')->get();
+        $customers = User::where('role_id', '2')->get();
         return $this->generateExport($customers, 'customers', $format);
     }
 

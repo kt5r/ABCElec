@@ -47,6 +47,12 @@
                             {{ __('messages.home') }}
                         </a>
                         
+                        @if(auth()->check() && auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
+                            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                {{ __('messages.dashboard') }}
+                            </a>
+                        @endif
+                        
                         <!-- Categories Dropdown -->
                         <div class="relative group">
                             <button class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
@@ -135,7 +141,7 @@
                                         {{ __('messages.manage_orders') }}
                                     </a>
                                     <div class="border-t my-1"></div>
-                                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                                         {{ __('messages.dashboard') }}
                                     </a>
                                 @endif
@@ -176,6 +182,11 @@
                     <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
                         {{ __('messages.home') }}
                     </a>
+                    @if(auth()->check() && auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
+                        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                            {{ __('messages.dashboard') }}
+                        </a>
+                    @endif
                     <a href="{{ route('admin.products.index') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
                         {{ __('messages.products') }}
                     </a>

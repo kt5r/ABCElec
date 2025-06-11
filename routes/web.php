@@ -9,7 +9,8 @@ use App\Http\Controllers\{
     HomeController,
     ProductController,
     ProfileController,
-    LanguageController
+    LanguageController,
+    SalesReportController
 };
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -87,7 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Product management
     Route::resource('products', ProductController::class)->except(['show']);
@@ -122,6 +123,11 @@ Route::middleware(['auth', 'role:sales_manager'])->prefix('sales')->name('sales.
     Route::get('/reports/daily', [AdminController::class, 'dailySalesReport'])->name('reports.daily');
     Route::get('/reports/export', [AdminController::class, 'exportDailySales'])->name('reports.export');
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports.index');
+});
+
+// Sales Reports Routes
+Route::middleware(['auth', 'role:admin,operation_manager,sales_manager'])->group(function () {
+    Route::get('/admin/reports/sales', [SalesReportController::class, 'index'])->name('admin.reports.sales');
 });
 
 // API routes for AJAX calls

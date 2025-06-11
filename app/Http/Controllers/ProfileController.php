@@ -11,8 +11,12 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Order;
 
-class ProfileController extends Controller
+class ProfileController extends BaseController
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->applyLocaleMiddleware();
+    }
     /**
      * Display the user's profile form.
      */

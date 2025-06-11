@@ -96,10 +96,12 @@ class User extends Authenticatable
     public function hasRole($roles)
     {
         if (is_array($roles)) {
-            return in_array($this->role, $roles);
+            return in_array($this->role, $roles) || 
+                   ($this->role_id && in_array($this->role->name, $roles));
         }
 
-        return $this->role === $roles;
+        return $this->role === $roles || 
+               ($this->role_id && $this->role->name === $roles);
     }
 
     /**
@@ -110,13 +112,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
-    // /**
-    //  * Check if the user has a specific role.
-    //  */
-    // public function hasRole(string $role): bool
-    // {
-    //     return $this->roles()->where('name', $role)->exists();
-    // }
     /**
      * Check if the user has any of the given roles.
      */
@@ -147,5 +142,10 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function getRoleAttribute()
+    {
+        return $this->role()->first()?->name ?? null;
     }
 }

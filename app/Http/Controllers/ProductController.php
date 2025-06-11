@@ -50,7 +50,7 @@ class ProductController extends BaseController
      */
     public function create()
     {
-        $categories = Category::where('status', true)->get();
+        $categories = Category::where('is_active', true)->get();
         return view('admin.products.create', compact('categories'));
     }
 

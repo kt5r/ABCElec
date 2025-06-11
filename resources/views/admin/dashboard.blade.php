@@ -17,12 +17,12 @@
                     </p>
                 </div>
                 <div class="mt-4 flex md:mt-0 md:ml-4">
-                    <button type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <a href="{{ route('admin.reports.sales') }}" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
-                        {{ __('Quick Actions') }}
-                    </button>
+                        {{ __('View Sales Reports') }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
                         @can('view-sales-reports')
-                        <a href="{{ route('admin.reports.dashboard') }}" class="font-medium text-purple-600 hover:text-purple-500">
+                        <a href="{{ route('admin.reports.sales') }}" class="font-medium text-purple-600 hover:text-purple-500">
                             {{ __('View reports') }}
                         </a>
                         @endcan
@@ -173,7 +173,7 @@
                                             <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                                 <div>
                                                     <p class="text-sm text-gray-500">
-                                                        {{ __('Order') }} #{{ $order->id }} {{ __('by') }} 
+                                                        {{ __('profile.order') }} #{{ $order->id }} {{ __('by') }} 
                                                         <a href="{{ route('admin.users.show', $order->user) }}" class="font-medium text-gray-900">{{ $order->user->name }}</a>
                                                     </p>
                                                 </div>
@@ -317,7 +317,7 @@
                     @endcan
 
                     @can('view-sales-reports')
-                    <a href="{{ route('admin.reports.dashboard') }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <a href="{{ route('admin.reports.sales') }}" class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <div class="flex-shrink-0">
                             <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,8 +327,8 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            <p class="text-sm font-medium text-gray-900">{{ __('View Reports') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('Sales analytics') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('Sales Reports') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('View daily sales reports') }}</p>
                         </div>
                     </a>
                     @endcan

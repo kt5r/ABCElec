@@ -20,16 +20,16 @@ class CategoryController extends BaseController
     {
         $categories = Category::where('is_active', true)
             ->withCount(['products' => function ($query) {
-                $query->where('is_active', true);
+                $query->where('status', true);
             }])
             ->with(['products' => function ($query) {
-                $query->where('is_active', true)
+                $query->where('status', true)
                       ->limit(3);
             }])
             ->orderBy('sort_order')
             ->get();
 
-        return view('categories.index', compact('categories'));
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
