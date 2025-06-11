@@ -8,7 +8,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-900">{{ __('messages.shopping_cart') }}</h1>
-            <a href="{{ route('product.index') }}" 
+            <a href="{{ route('products.index') }}" 
                class="text-indigo-600 hover:text-indigo-900 font-medium">
                 {{ __('messages.continue_shopping') }}
             </a>
@@ -150,7 +150,7 @@
 
                         <!-- Continue Shopping -->
                         <div class="mt-6 pt-6 border-t border-gray-200">
-                            <a href="{{ route('product.index') }}" 
+                            <a href="{{ route('products.index') }}" 
                                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>

@@ -70,33 +70,31 @@
             <p class="text-gray-600 max-w-2xl mx-auto">{{ __('messages.browse_categories') }}</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($categories as $category)
-            <a href="{{ route('category.show', $category->slug) }}" 
-               class="group relative bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                <div class="aspect-w-16 aspect-h-12 bg-gradient-to-br from-blue-400 to-purple-500">
-                    @if($category->image)
-                        <img src="{{ $category->image }}" alt="{{ $category->name }}" 
-                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
-                    @else
-                        <div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
+                <a href="{{ route('category.show', $category->slug) }}" class="group">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="aspect-w-16 aspect-h-12 bg-gray-200">
+                            @php
+                                $decodedImage = $category->image ? json_decode($category->image) : null;
+                                $imagePath = $decodedImage && is_array($decodedImage) && !empty($decodedImage) ? $decodedImage[0] : null;
+                            @endphp
+                            @if($imagePath && file_exists(storage_path('app/public/' . $imagePath)))
+                                <img src="{{ asset('storage/' . $imagePath) }}" alt="{{ $category->name }}" class="w-full h-48 object-cover group-hover:opacity-75 transition-opacity">
+                            @else
+                                <div class="w-full h-48 bg-gray-300 flex items-center justify-center">
+                                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            @endif
                         </div>
-                    @endif
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                        {{ $category->name }}
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4">{{ $category->description }}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">{{ $category->products_count }} {{ __('messages.products') }}</span>
-                        <span class="text-blue-600 group-hover:text-blue-700 font-medium">{{ __('messages.browse') }} →</span>
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $category->name }}</h3>
+                            <p class="text-gray-600 text-sm mt-2 line-clamp-2">{{ $category->description }}</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
             @endforeach
         </div>
     </div>

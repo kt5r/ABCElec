@@ -9,7 +9,7 @@
             <div class="md:w-1/2">
                 <div class="aspect-w-16 aspect-h-12 bg-gray-200">
                     @if($product->images && count(json_decode($product->images)) > 0)
-                        <img src="{{ json_decode($product->images)[0] }}" alt="{{ $product->name }}" class="w-full h-96 object-cover">
+                        <img src="{{ Storage::url(json_decode($product->images)[0]) }}" alt="{{ $product->name }}" class="w-full h-96 object-cover">
                     @else
                         <div class="w-full h-96 bg-gray-300 flex items-center justify-center">
                             <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

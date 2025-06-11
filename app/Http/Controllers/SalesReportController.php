@@ -24,7 +24,7 @@ class SalesReportController extends BaseController
 
         // Get daily sales summary
         $dailySales = Order::whereBetween('created_at', [$startDate, $endDate])
-            ->where('payment_status', 'completed')
+            ->where('payment_status', 'paid')
             ->select(
                 DB::raw('COUNT(*) as total_orders'),
                 DB::raw('SUM(total_amount) as total_sales'),
@@ -35,7 +35,7 @@ class SalesReportController extends BaseController
         // Get sales by product
         $salesByProduct = OrderItem::whereHas('order', function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('created_at', [$startDate, $endDate])
-                      ->where('payment_status', 'completed');
+                      ->where('payment_status', 'paid');
             })
             ->select(
                 'product_id',
@@ -49,7 +49,7 @@ class SalesReportController extends BaseController
 
         // Get sales by hour
         $salesByHour = Order::whereBetween('created_at', [$startDate, $endDate])
-            ->where('payment_status', 'completed')
+            ->where('payment_status', 'paid')
             ->select(
                 DB::raw('HOUR(created_at) as hour'),
                 DB::raw('COUNT(*) as total_orders'),
@@ -61,7 +61,7 @@ class SalesReportController extends BaseController
 
         // Get payment method distribution
         $paymentMethods = Order::whereBetween('created_at', [$startDate, $endDate])
-            ->where('payment_status', 'completed')
+            ->where('payment_status', 'paid')
             ->select(
                 'payment_method',
                 DB::raw('COUNT(*) as total_orders'),

@@ -35,13 +35,29 @@ class CategoryController extends BaseController
     /**
      * Display the specified category and its products
      */
-    public function show(Category $category)
+    public function show($id)
     {
-        $category->load(['products' => function ($query) {
-            $query->latest()->take(5);
-        }]);
+        // Check if we're in admin context
+        if (request()->is('admin/*')) {
+            $category = Category::findOrFail($id);
+            $category->load(['products' => function ($query) {
+                $query->latest()->take(5);
+            }]);
+            
+            return view('admin.categories.show', compact('category'));
+        }
         
-        return view('admin.categories.show', compact('category'));
+        // Public context - find by slug
+        $category = Category::where('slug', $id)
+            ->where('is_active', true)
+            ->firstOrFail();
+            
+        $products = $category->products()
+            ->where('status', true)
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+            
+        return view('category.show', compact('category', 'products'));
     }
 
     /**

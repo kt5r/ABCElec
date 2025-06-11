@@ -19,7 +19,7 @@
                 <p class="text-gray-600 text-center mb-4">
                     {{ $category->products_count }} {{ __('common.products') }}
                 </p>
-                <a href="{{ route('admin.categories.show', $category->slug) }}" 
+                <a href="{{ route('admin.categories.show', ['category' => $category->id]) }}" 
                    class="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition-colors">
                     {{ __('common.view_products') }}
                 </a>

@@ -13,11 +13,8 @@
             <input type="date" 
                    name="date" 
                    value="{{ $date }}"
+                   onchange="this.form.submit()"
                    class="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-            <button type="submit" 
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                {{ __('View Report') }}
-            </button>
         </form>
     </div>
 

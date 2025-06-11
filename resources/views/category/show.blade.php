@@ -9,8 +9,8 @@
         @forelse($products as $product)
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="aspect-w-16 aspect-h-12 bg-gray-200">
-                    @if($product->images && count(json_decode($product->images)) > 0)
-                        <img src="{{ json_decode($product->images)[0] }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+                    @if($product->image && is_string($product->image) && file_exists(storage_path('app/public/' . json_decode($product->image)[0])))
+                        <img src="{{ asset('storage/' . json_decode($product->image)[0]) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
                     @else
                         <div class="w-full h-48 bg-gray-300 flex items-center justify-center">
                             <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
