@@ -47,16 +47,23 @@ class CategoryController extends BaseController
             return view('admin.categories.show', compact('category'));
         }
         
-        // Public context - find by slug
-        $category = Category::where('slug', $id)
-            ->where('is_active', true)
-            ->firstOrFail();
+        // Public context - handle 'all' or find by slug
+        if ($id === 'all') {
+            $category = null;
+            $products = Product::where('status', true)
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
+        } else {
+            $category = Category::where('slug', $id)
+                ->where('is_active', true)
+                ->firstOrFail();
             
-        $products = $category->products()
-            ->where('status', true)
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
-            
+            $products = $category->products()
+                ->where('status', true)
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
+        }
+        
         return view('category.show', compact('category', 'products'));
     }
 

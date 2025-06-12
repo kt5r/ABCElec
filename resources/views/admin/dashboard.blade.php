@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Admin Dashboard') . ' - ABC Private LTD')
+@section('title', __('dashboard.admin_dashboard') . ' - ABC Private LTD')
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
@@ -10,10 +10,10 @@
             <div class="md:flex md:items-center md:justify-between">
                 <div class="flex-1 min-w-0">
                     <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                        {{ __('Admin Dashboard') }}
+                        {{ __('dashboard.admin_dashboard') }}
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
-                        {{ __('Welcome back') }}, {{ auth()->user()->name }}
+                        {{ __('dashboard.welcome_back') }}, {{ auth()->user()->name }}
                     </p>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Products') }}</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('dashboard.total_products') }}</dt>
                                 <dd class="text-lg font-medium text-gray-900">{{ $total_products ?? 0 }}</dd>
                             </dl>
                         </div>
@@ -45,7 +45,7 @@
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
                         <a href="{{ route('admin.products.index') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
-                            {{ __('View all products') }}
+                            {{ __('dashboard.view_all_products') }}
                         </a>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Orders') }}</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('dashboard.total_orders') }}</dt>
                                 <dd class="text-lg font-medium text-gray-900">{{ $total_orders ?? 0 }}</dd>
                             </dl>
                         </div>
@@ -73,7 +73,7 @@
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
                         <a href="{{ route('admin.orders.index') }}" class="font-medium text-green-600 hover:text-green-500">
-                            {{ __('View all orders') }}
+                            {{ __('dashboard.view_all_orders') }}
                         </a>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Users') }}</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('dashboard.total_users') }}</dt>
                                 <dd class="text-lg font-medium text-gray-900">{{ $total_customers ?? 0 }}</dd>
                             </dl>
                         </div>
@@ -101,7 +101,7 @@
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
                         <a href="{{ route('admin.users.index') }}" class="font-medium text-yellow-600 hover:text-yellow-500">
-                            {{ __('View all users') }}
+                            {{ __('dashboard.view_all_users') }}
                         </a>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('Total Revenue') }}</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate">{{ __('dashboard.total_revenue') }}</dt>
                                 <dd class="text-lg font-medium text-gray-900">${{ number_format($total_revenue ?? 0, 2) }}</dd>
                             </dl>
                         </div>
@@ -130,7 +130,7 @@
                     <div class="text-sm">
                         @can('view-sales-reports')
                         <a href="{{ route('admin.reports.sales') }}" class="font-medium text-purple-600 hover:text-purple-500">
-                            {{ __('View reports') }}
+                            {{ __('dashboard.view_reports') }}
                         </a>
                         @endcan
                     </div>
@@ -143,7 +143,7 @@
             <div class="bg-white shadow rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                        {{ __('Recent Orders') }}
+                        {{ __('dashboard.recent_orders') }}
                     </h3>
                     @if(isset($recentOrders) && $recentOrders->count() > 0)
                         <div class="flow-root">
@@ -165,7 +165,7 @@
                                             <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                                 <div>
                                                     <p class="text-sm text-gray-500">
-                                                        {{ __('profile.order') }} #{{ $order->id }} {{ __('by') }} 
+                                                        order #{{ $order->id }} by
                                                         <a href="{{ route('admin.users.show', $order->user) }}" class="font-medium text-gray-900">{{ $order->user->name }}</a>
                                                     </p>
                                                 </div>
@@ -180,11 +180,11 @@
                             </ul>
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-4">{{ __('No recent orders') }}</p>
+                        <p class="text-gray-500 text-center py-4">{{ __('messages.no_results') }}</p>
                     @endif
                     <div class="mt-6">
                         <a href="{{ route('admin.orders.index') }}" class="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            {{ __('View all orders') }}
+                            {{ __('dashboard.view_all_orders') }}
                         </a>
                     </div>
                 </div>
@@ -196,7 +196,7 @@
         <div class="mt-8 bg-white shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    {{ __('Quick Actions') }}
+                    {{ __('dashboard.quick_actions') }}
                 </h3>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     @can('create-products')
@@ -210,8 +210,8 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            <p class="text-sm font-medium text-gray-900">{{ __('Add Product') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('Create new product') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('dashboard.add_product') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('dashboard.create_new_product') }}</p>
                         </div>
                     </a>
                     @endcan
@@ -227,8 +227,8 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            <p class="text-sm font-medium text-gray-900">{{ __('Add Category') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('Create new category') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('dashboard.manage_categories') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('dashboard.create_new_category') }}</p>
                         </div>
                     </a>
                     @endcan
@@ -244,8 +244,8 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            <p class="text-sm font-medium text-gray-900">{{ __('Add User') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('Create new user') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('dashboard.manage_users') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('dashboard.create_new_user') }}</p>
                         </div>
                     </a>
                     @endcan
@@ -261,8 +261,8 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <span class="absolute inset-0" aria-hidden="true"></span>
-                            <p class="text-sm font-medium text-gray-900">{{ __('Sales Reports') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('View daily sales reports') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ __('dashboard.sales_overview') }}</p>
+                            <p class="text-sm text-gray-500">{{ __('dashboard.sales_chart_will_be_implemented_here') }}</p>
                         </div>
                     </a>
                     @endcan

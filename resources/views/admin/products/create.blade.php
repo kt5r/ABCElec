@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', __('Add New Product'))
+@section('title', __('messages.add_new_product'))
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">{{ __('Add New Product') }}</h1>
+            <h1 class="text-3xl font-bold text-gray-900">{{ __('messages.add_new_product') }}</h1>
             <a href="{{ route('products.index') }}" 
                class="text-indigo-600 hover:text-indigo-900 font-medium">
-                ← {{ __('Back to Products') }}
+                ← {{ __('messages.back_to_products') }}
             </a>
         </div>
 
@@ -22,7 +22,7 @@
                 <!-- Product Name -->
                 <div class="mb-6">
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Product Name') }} <span class="text-red-500">*</span>
+                        {{ __('messages.product_name') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" 
                            id="name" 
@@ -54,7 +54,7 @@
                 <!-- Category -->
                 <div class="mb-6">
                     <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Category') }} <span class="text-red-500">*</span>
+                        {{ __('messages.category') }} <span class="text-red-500">*</span>
                     </label>
                     <select id="category_id" 
                             name="category_id"
@@ -75,7 +75,7 @@
                 <!-- Description -->
                 <div class="mb-6">
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Description') }} <span class="text-red-500">*</span>
+                        {{ __('messages.description') }} <span class="text-red-500">*</span>
                     </label>
                     <textarea id="description" 
                               name="description" 
@@ -90,7 +90,7 @@
                 <!-- Short Description -->
                 <div class="mb-6">
                     <label for="short_description" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Short Description') }}
+                        {{ __('messages.short_description') }}
                     </label>
                     <textarea id="short_description" 
                               name="short_description" 
@@ -104,7 +104,7 @@
                 <!-- Price -->
                 <div class="mb-6">
                     <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Price') }} <span class="text-red-500">*</span>
+                        {{ __('messages.price') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
                            id="price" 
@@ -121,7 +121,7 @@
                 <!-- Sale Price -->
                 <div class="mb-6">
                     <label for="sale_price" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Sale Price') }}
+                        {{ __('messages.sale_price') }}
                     </label>
                     <input type="number" 
                            id="sale_price" 
@@ -137,7 +137,7 @@
                 <!-- Stock Quantity -->
                 <div class="mb-6">
                     <label for="stock_quantity" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Stock Quantity') }} <span class="text-red-500">*</span>
+                        {{ __('messages.stock_quantity') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
                            id="stock_quantity" 
@@ -153,7 +153,7 @@
                 <!-- Image -->
                 <div class="mb-6">
                     <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('Product Image') }}
+                        {{ __('messages.product_image') }}
                     </label>
                     <input type="file" 
                            id="image" 
@@ -175,7 +175,7 @@
                                {{ old('manage_stock') ? 'checked' : '' }}
                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <label for="manage_stock" class="ml-2 block text-sm text-gray-700">
-                            {{ __('Manage Stock') }}
+                            {{ __('messages.manage_stock') }}
                         </label>
                     </div>
 
@@ -187,7 +187,7 @@
                                {{ old('in_stock') ? 'checked' : '' }}
                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <label for="in_stock" class="ml-2 block text-sm text-gray-700">
-                            {{ __('In Stock') }}
+                            {{ __('messages.in_stock') }}
                         </label>
                     </div>
 
@@ -199,7 +199,7 @@
                                {{ old('featured') ? 'checked' : '' }}
                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <label for="featured" class="ml-2 block text-sm text-gray-700">
-                            {{ __('Featured Product') }}
+                            {{ __('messages.featured_product') }}
                         </label>
                     </div>
 
@@ -211,7 +211,7 @@
                                {{ old('status') ? 'checked' : '' }}
                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <label for="status" class="ml-2 block text-sm text-gray-700">
-                            {{ __('Active') }}
+                            {{ __('messages.active') }}
                         </label>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
                 <div class="flex justify-end">
                     <button type="submit" 
                             class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                        {{ __('Create Product') }}
+                        {{ __('messages.reate_product') }}
                     </button>
                 </div>
             </form>

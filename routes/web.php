@@ -36,9 +36,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
-Route::get('/terms', function () {
-    return view('terms');
-})->name('terms');
 
 // Authentication routes
 require __DIR__.'/auth.php';
@@ -94,35 +91,18 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('products', ProductController::class)->except(['show']);
     Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
     
-    // Category management
-    Route::resource('categories', CategoryController::class);
-    Route::post('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
-    
     // Order management
     Route::get('orders', [AdminController::class, 'orders'])->name('orders.index');
-    Route::get('orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');
-    Route::patch('orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.update-status');
+    // Route::get('orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');
+    // Route::patch('orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.update-status');
     
     // User management
     Route::get('users', [AdminController::class, 'users'])->name('users.index');
     Route::get('users/{user}', [AdminController::class, 'showUser'])->name('users.show');
-    Route::patch('users/{user}/status', [AdminController::class, 'updateUserStatus'])->name('users.update-status');
-    Route::get('users/create', [AdminController::class, 'createUser'])->name('users.create');
-    Route::post('users', [AdminController::class, 'storeUser'])->name('users.store');
+    // Route::patch('users/{user}/status', [AdminController::class, 'updateUserStatus'])->name('users.update-status');
+    // Route::get('users/create', [AdminController::class, 'createUser'])->name('users.create');
+    // Route::post('users', [AdminController::class, 'storeUser'])->name('users.store');
     
-    // System reports (Admin and Operation Manager only)
-    Route::get('reports', [AdminController::class, 'reports'])->name('reports.index');
-    Route::get('reports/sales', [AdminController::class, 'salesReport'])->name('reports.sales');
-    Route::get('reports/products', [AdminController::class, 'productsReport'])->name('reports.products');
-    Route::get('reports/users', [AdminController::class, 'usersReport'])->name('reports.users');
-});
-
-// Sales Manager routes
-Route::middleware(['auth', 'can:view-sales-reports'])->prefix('sales')->name('sales.')->group(function () {
-    Route::get('/', [AdminController::class, 'salesDashboard'])->name('dashboard');
-    Route::get('/reports/daily', [AdminController::class, 'dailySalesReport'])->name('reports.daily');
-    Route::get('/reports/export', [AdminController::class, 'exportDailySales'])->name('reports.export');
-    Route::get('/reports', [AdminController::class, 'reports'])->name('reports.index');
 });
 
 // Sales Reports Routes

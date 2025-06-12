@@ -39,6 +39,18 @@ return [
     'maximum' => 'Maximum',
     'unavailable' => 'Unavailable',
     'adding' => 'Adding',
+    'apply_filters' => 'Apply Filters',
+    'add_new_product' => 'Add New Product',
+    'back_to_products' => 'Back to Products',
+    'featured_product' => 'Featured Product',
+    'manage_stock' => 'Manage Stock',
+    'active' => 'Active',
+    'stock_quantity' => 'Short Description',
+    'sale_price' => 'Sale Price',
+    'short_description' => 'Short Description',
+    'product_image' => 'Product Image',
+    'status' => 'Status',
+    'actions' => 'Action',
 
     // Cart related
     'shopping_cart' => 'Shopping Cart',
@@ -136,6 +148,7 @@ return [
     'error' => 'Error',
     'warning' => 'Warning',
     'info' => 'Information',
+    'all' => 'All',
 
     // Messages
     'welcome_message' => 'Welcome to ABC Electronics',
@@ -242,4 +255,13 @@ return [
         'view_product' => 'View Product',
         'products' => 'Products',
     ],
+    // Report related
+    'view_sales_report' => 'View Sales Report',
+    'daily_sales_report' => 'Daily Sales Report',
+    'total_orders' => 'Total Orders',
+    'total_sales' => 'Total Sales',
+    'average_order_values' => 'Average Order Value',
+    'sales_by_product' => 'Sales by Product',
+    'sales_by_hour' => 'Sales by Hour',
+    'payment_methods' => 'Payment Methods', 
 ];

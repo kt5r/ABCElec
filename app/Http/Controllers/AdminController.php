@@ -448,8 +448,7 @@ class AdminController extends BaseController
      */
     public function users(Request $request)
     {
-        $query = User::with('role')
-            ->latest();
+        $query = User::latest();
 
         // Search functionality
         if ($request->has('search')) {
@@ -460,14 +459,9 @@ class AdminController extends BaseController
             });
         }
 
-        // Filter by role
-        if ($request->has('role')) {
-            $query->where('role', $request->role);
-        }
-
         // Filter by status
         if ($request->has('status')) {
-            $query->where('is_active', $request->status === 'active');
+            $query->where('status', $request->status === 'active');
         }
 
         $users = $query->paginate(10)->withQueryString();

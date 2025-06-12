@@ -30,15 +30,8 @@ class DatabaseSeeder extends Seeder
             OtherProductsSeeder::class,
             
             // Sample data seeders
-            SampleOrderSeeder::class,
             CartItemSeeder::class,
             OrderItemSeeder::class,
-            
-            // Language support
-            LanguageSeeder::class,
-            
-            // Reports
-            SalesReportSeeder::class,
         ]);
         
         $this->command->info('Database seeding completed successfully!');

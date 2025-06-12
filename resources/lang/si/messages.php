@@ -137,6 +137,19 @@ return [
     'error' => 'දෝෂය',
     'warning' => 'අනතුරු ඇඟවීම',
     'info' => 'තොරතුරු',
+    'all' => 'සියලු භාණ්ඩ',
+    'apply_filters' => 'පෙරහන් යොදන්න',
+    'add_new_product' => 'නව භාණ්ඩය',
+    'back_to_products' => 'ආපසු',
+    'featured_product' => 'විශේෂිත නිෂ්පාදන',
+    'manage_stock' => 'තොග කළමනාකරණය',
+    'active' => 'සක්‍රීය',
+    'stock_quantity' => 'තොග ප්‍රමාණය',
+    'sale_price' => 'විකුණුම් මිල',
+    'short_description' => 'කෙටි විස්තරය',
+    'product_image' => 'නිෂ්පාදන රූපය',
+    'status' => 'තත්ත්වය',
+    'actions' => 'ක්‍රියාව',
 
     // Messages
     'welcome_message' => 'ABC ඉලෙක්ට්‍රොනික් වෙත ස්වාගතයි',
@@ -242,4 +255,15 @@ return [
         'view_product' => 'නිෂ්පාදනය බලන්න',
         'products' => 'නිෂ්පාදන',
     ],
+
+    // Report related
+    'view_sales_report' => 'විකුණුම් වාර්තාව',
+    'daily_sales_report' => 'දෛනික විකුණුම් වාර්තාව',
+    'total_orders' => 'මුළු ඇණවුම්',
+    'total_sales' => 'මුළු විකුණුම්',
+    'average_order_values' => 'සාමාන්‍ය ඇණවුම් වටිනාකම',
+    'sales_by_product' => 'නිෂ්පාදන අනුව විකුණුම්',
+    'sales_by_hour' => 'පැය අනුව විකුණුම්',
+    'payment_methods' => 'ගෙවීමේ ක්‍රම', 
+    
 ];

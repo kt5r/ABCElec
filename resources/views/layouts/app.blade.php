@@ -63,6 +63,9 @@
                             </button>
                             <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-1">
+                                    <a href="{{ route('category.show', 'all') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                        {{ __('messages.all') }}
+                                    </a>
                                     @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
                                         <a href="{{ route('category.show', $category) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                                             {{ __('messages.' . $category) }}
@@ -76,7 +79,7 @@
                             {{ __('messages.products') }}
                         </a>
                         <a href="{{ route('admin.reports.sales') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            View Sales Report
+                            {{__('messages.view_sales_report')}}
                         </a>
                     </div>
 
@@ -141,7 +144,7 @@
                                 </a>
                                 @if(auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
                                     <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                        {{ __('messages.manage_orders') }}
+                                        {{ __('dashboard.view_all_orders') }}
                                     </a>
                                     <div class="border-t my-1"></div>
                                     <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">

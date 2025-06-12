@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Http\Requests\CheckoutRequest;
 
 class CheckoutController extends BaseController
 {
@@ -65,45 +66,8 @@ class CheckoutController extends BaseController
     /**
      * Process checkout
      */
-    public function process(Request $request)
+    public function process(CheckoutRequest $request)
     {
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'postal_code' => 'required|string|max:20',
-            'country' => 'required|string|max:100',
-            // 'payment_method' => 'required|in:credit_card',
-            // 'terms_accepted' => 'required|accepted'
-        ]);
-
-        // Add validation for credit card fields when payment method is credit_card
-        if ($request->payment_method === 'credit_card') {
-            $request->validate([
-                'card_number' => 'required|string|min:16|max:19',
-                'card_expiry' => 'required|string|size:5', // MM/YY format
-                'card_cvc' => 'required|string|size:3',
-                'card_name' => 'required|string|max:255',
-            ]);
-        }
-
-        // Validate shipping address if different from billing
-        if ($request->has('different_shipping') && $request->different_shipping) {
-            $request->validate([
-                'shipping_first_name' => 'required|string|max:255',
-                'shipping_last_name' => 'required|string|max:255',
-                'shipping_address' => 'required|string|max:500',
-                'shipping_city' => 'required|string|max:100',
-                'shipping_state' => 'required|string|max:100',
-                'shipping_postal_code' => 'required|string|max:20',
-                'shipping_country' => 'required|string|max:100',
-            ]);
-        }
-
         $cartItems = CartItem::with('product')
             ->forUser(Auth::id())
             ->get();
