@@ -29,7 +29,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->alias(CartService::class, 'cart');
         $this->app->bind('App\Services\PaymentService');
         $this->app->bind('App\Services\NotificationService');
-        $this->app->bind('App\Services\MailService');
     }
 
     /**

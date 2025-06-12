@@ -17,10 +17,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             
             // User seeders
-            AdminUserSeeder::class,
-            SalesManagerSeeder::class,
-            OperationManagerSeeder::class,
-            CustomerSeeder::class,
+            UserSeeder::class,
             
             // Category and Product seeders
             CategorySeeder::class,
@@ -30,15 +27,8 @@ class DatabaseSeeder extends Seeder
             OtherProductsSeeder::class,
             
             // Sample data seeders
-            SampleOrderSeeder::class,
             CartItemSeeder::class,
             OrderItemSeeder::class,
-            
-            // Language support
-            LanguageSeeder::class,
-            
-            // Reports
-            SalesReportSeeder::class,
         ]);
         
         $this->command->info('Database seeding completed successfully!');

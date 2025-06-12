@@ -207,13 +207,7 @@
                                            {{ old('payment_method') == 'paypal' ? 'checked' : '' }}
                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
                                     <span class="ml-2 text-sm text-gray-700">{{ __('PayPal') }}</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="radio" name="payment_method" value="bank_transfer" 
-                                           {{ old('payment_method') == 'bank_transfer' ? 'checked' : '' }}
-                                           class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                                    <span class="ml-2 text-sm text-gray-700">{{ __('Bank Transfer') }}</span>
-                                </label> --}}
+                                </label>--}}
                             </div>
                         </div>
 
@@ -319,25 +313,6 @@
                         </div>
                     </div>
 
-                    {{-- <!-- Terms and Conditions -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex items-start">
-                            <input type="checkbox" 
-                                   id="terms_accepted" 
-                                   name="terms_accepted" 
-                                   value="1"
-                                   {{ old('terms_accepted') ? 'checked' : '' }}
-                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-0.5">
-                            <label for="terms_accepted" class="ml-2 text-sm text-gray-700">
-                                {{ __('I have read and agree to the') }}
-                                <a href="{{ route('terms') }}" target="_blank" class="text-indigo-600 hover:text-indigo-500 underline">{{ __('Terms and Conditions') }}</a>
-                                {{ __('and') }}
-                            </label>
-                        </div>
-                        @error('terms_accepted')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div> --}}
                 </form>
             </div>
 

@@ -1,19 +1,17 @@
 @extends('layouts.app')
 
-@section('title', __('Products'))
+@section('title', __('messages.products'))
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <!-- Page Header -->
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">{{ __('Products') }}</h1>
+        <h1 class="text-3xl font-bold text-gray-900">{{ __('messages.products') }}</h1>
         
-        @can('create', App\Models\Product::class)
-            <a href="{{ route('admin.products.create') }}" 
-               class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                {{ __('Add New Product') }}
-            </a>
-        @endcan
+        <a href="{{ route('admin.products.create') }}" 
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium transition duration-200">
+            {{ __('messages.add_new_product') }}
+        </a>
     </div>
 
     <!-- Search and Filters -->
@@ -23,7 +21,7 @@
                 <!-- Search -->
                 <div>
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('Search') }}
+                        {{ __('messages.search') }}
                     </label>
                     <input type="text" 
                            id="search" 
@@ -36,7 +34,7 @@
                 <!-- Category Filter -->
                 <div>
                     <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('Category') }}
+                        {{ __('messages.category') }}
                     </label>
                     <select id="category" 
                             name="category"
@@ -50,27 +48,15 @@
                     </select>
                 </div>
 
-                <!-- Status Filter -->
-                <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('Status') }}
-                    </label>
-                    <select id="status" 
-                            name="status"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">{{ __('All Status') }}</option>
-                        <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>{{ __('Active') }}</option>
-                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
-                    </select>
+                <div class="flex justify-end">
+                    <button type="submit" 
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('messages.apply_filters') }}
+                    </button>
                 </div>
             </div>
 
-            <div class="flex justify-end">
-                <button type="submit" 
-                        class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    {{ __('Apply Filters') }}
-                </button>
-            </div>
+            
         </form>
     </div>
 
@@ -80,22 +66,22 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ __('messages.product') }}
+                        {{ __('messages.products') }}
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ __('Category') }}
+                        {{ __('messages.category') }}
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ __('Price') }}
+                        {{ __('messages.price') }}
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ __('Stock') }}
+                        {{ __('messages.stock') }}
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ __('Status') }}
+                        {{ __('messages.status') }}
                     </th>
                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ __('Actions') }}
+                        {{ __('messages.actions') }}
                     </th>
                 </tr>
             </thead>
@@ -172,7 +158,7 @@
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
-                            {{ __('No products found.') }}
+                            {{ __('messages.no_results') }}
                         </td>
                     </tr>
                 @endforelse

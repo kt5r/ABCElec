@@ -169,7 +169,7 @@
                     <h3 class="text-lg font-semibold text-gray-800">{{ __('profile.payment_method') }}</h3>
                     <p class="text-gray-600">
                         @if($order->payment_method)
-                            {{ ucfirst($order->payment_method) }}
+                            {{ \Illuminate\Support\Str::headline($order->payment_method) }}
                             @if($order->payment_status)
                                 - {{ ucfirst($order->payment_status) }}
                             @endif

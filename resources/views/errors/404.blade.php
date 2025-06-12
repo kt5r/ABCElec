@@ -36,7 +36,7 @@
                 <a href="{{ route('admin.products.index') }}" class="text-blue-600 hover:text-blue-800">
                     {{ __('messages.products') }}
                 </a>
-                <a href="{{ route('admin.categories.index') }}" class="text-blue-600 hover:text-blue-800">
+                <a href="{{ route('home') }}" class="text-blue-600 hover:text-blue-800">
                     {{ __('messages.categories') }}
                 </a>
                 @auth

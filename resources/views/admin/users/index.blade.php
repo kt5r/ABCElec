@@ -83,18 +83,14 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                @if($user->role === 'admin') bg-red-100 text-red-800
-                                @elseif($user->role === 'operation_manager') bg-purple-100 text-purple-800
-                                @elseif($user->role === 'sales_manager') bg-blue-100 text-blue-800
-                                @else bg-gray-100 text-gray-800 @endif">
-                                {{ ucfirst(str_replace('_', ' ', $user->role)) }}
+                            <span class="text-indigo-800 font-medium text-sm">
+                                {{ $user->role->display_name }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                {{ $user->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ $user->is_active ? __('Active') : __('Inactive') }}
+                                {{ $user->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $user->status ? __('Active') : __('Inactive') }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

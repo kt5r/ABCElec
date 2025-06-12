@@ -36,48 +36,100 @@
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                            <img src="{{ asset('logo.png') }}" alt="ABCElec" class="h-8 w-auto" onerror="this.style.display='none'">
-                            <span class="font-bold text-xl text-gray-900">ABCElec</span>
+                            <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" class="h-8 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'">
+                            <span class="font-bold text-xl" style="display: none;">{{ config('app.name') }}</span>
                         </a>
                     </div>
 
                     <!-- Navigation Links -->
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            {{ __('messages.home') }}
-                        </a>
-                        
-                        @if(auth()->check() && auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
-                            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                                {{ __('messages.dashboard') }}
+                        {{-- Home - Available to all authenticated users --}}
+                        @auth
+                            @if(auth()->user()->hasRole('customer'))
+                                <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                    {{ __('messages.home') }}
+                                </a>
+                            @endif
+                        @else
+                            <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                {{ __('messages.home') }}
                             </a>
-                        @endif
+                        @endauth
                         
-                        <!-- Categories Dropdown -->
-                        <div class="relative group">
-                            <button class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
-                                {{ __('messages.categories') }}
-                                <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <div class="py-1">
-                                    @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
-                                        <a href="{{ route('category.show', $category) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                            {{ __('messages.' . $category) }}
+                        {{-- Dashboard - Admin, Operation Manager, Sales Manager --}}
+                        @auth
+                            @if(auth()->user()->hasRole(['admin', 'operation_manager']))
+                                <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                    {{ __('messages.dashboard') }}
+                                </a>
+                            @endif
+                        @endauth
+                        
+                        {{-- Categories - Only for customers --}}
+                        @auth
+                            @if(auth()->user()->hasRole('customer'))
+                                <div class="relative group">
+                                    <button class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
+                                        {{ __('messages.categories') }}
+                                        <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                        <div class="py-1">
+                                            <a href="{{ route('category.show', 'all') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                {{ __('messages.all') }}
+                                            </a>
+                                            @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
+                                                <a href="{{ route('category.show', $category) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                    {{ __('messages.' . $category) }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            {{-- Show categories to guests --}}
+                            <div class="relative group">
+                                <button class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
+                                    {{ __('messages.categories') }}
+                                    <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <div class="py-1">
+                                        <a href="{{ route('category.show', 'all') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                            {{ __('messages.all') }}
                                         </a>
-                                    @endforeach
+                                        @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
+                                            <a href="{{ route('category.show', $category) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                {{ __('messages.' . $category) }}
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endauth
 
-                        <a href="{{ route('admin.products.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            {{ __('messages.products') }}
-                        </a>
-                        <a href="{{ route('admin.reports.sales') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            View Sales Report
-                        </a>
+                        {{-- Products - Admin, Operation Manager --}}
+                        @auth
+                            @if(auth()->user()->hasRole(['admin', 'operation_manager']))
+                                <a href="{{ route('admin.products.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                    {{ __('messages.products') }}
+                                </a>
+                            @endif
+                        @endauth
+                        
+                        {{-- View Sales Report - Admin, Operation Manager, Sales Manager --}}
+                        @auth
+                            @if(auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
+                                <a href="{{ route('admin.reports.sales') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                    {{ __('messages.view_sales_report') }}
+                                </a>
+                            @endif
+                        @endauth
                     </div>
 
                     <!-- Right Side -->
@@ -105,69 +157,83 @@
                             </div>
                         </div>
 
-                        <!-- Cart -->
+                        <!-- Cart - Only for customers -->
                         @auth
-                            <a href="{{ route('cart.index') }}" class="relative text-gray-700 hover:text-blue-600 transition-colors">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l1.5-6m0 0h12.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"></path>
-                                </svg>
-                                @if(auth()->check() && app('cart')->getCartItemCount(auth()->user()) > 0)
-                                    <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                        {{ app('cart')->getCartItemCount(auth()->user()) }}
-                                    </span>
-                                @endif
-                            </a>
+                            @if(auth()->user()->hasRole('customer'))
+                                <a href="{{ route('cart.index') }}" class="relative text-gray-700 hover:text-blue-600 transition-colors">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l1.5-6m0 0h12.5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"></path>
+                                    </svg>
+                                    @if(app('cart')->getCartItemCount(auth()->user()) > 0)
+                                        <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                            {{ app('cart')->getCartItemCount(auth()->user()) }}
+                                        </span>
+                                    @endif
+                                </a>
+                            @endif
                         @endauth
 
                         <!-- User Menu -->
-                @auth
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
-                            <div class="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                {{ substr(auth()->user()->name, 0, 1) }}
+                        @auth
+                            <div class="relative group">
+                                <button class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
+                                    <div class="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                        {{ substr(auth()->user()->name, 0, 1) }}
+                                    </div>
+                                    <span class="hidden sm:block text-sm font-medium">{{ auth()->user()->name }}</span>
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <div class="py-1">
+                                        {{-- Profile - Available to all roles --}}
+                                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                            {{ __('messages.profile') }}
+                                        </a>
+                                        
+                                        {{-- Order History - Only for customers --}}
+                                        @if(auth()->user()->hasRole('customer'))
+                                            <a href="{{ route('profile.order-history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                {{ __('messages.order_history') }}
+                                            </a>
+                                        @endif
+                                        
+                                        {{-- View All Orders - Admin, Operation Manager --}}
+                                        @if(auth()->user()->hasRole(['admin', 'operation_manager']))
+                                            <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                {{ __('dashboard.view_all_orders') }}
+                                            </a>
+                                        @endif
+                                        
+                                        {{-- Dashboard Link in Dropdown --}}
+                                        @if(auth()->user()->hasRole(['admin', 'operation_manager']))
+                                            <div class="border-t my-1"></div>
+                                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                {{ __('messages.dashboard') }}
+                                            </a>
+                                        @endif
+                                        
+                                        <div class="border-t my-1"></div>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                                {{ __('messages.logout') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="hidden sm:block text-sm font-medium">{{ auth()->user()->name }}</span>
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            <div class="py-1">
-                                <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                    {{ __('messages.profile') }}
+                        @else
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ route('login') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                    {{ __('messages.login') }}
                                 </a>
-                                <a href="{{ route('profile.order-history') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                    {{ __('messages.order_history') }}
+                                <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                    {{ __('messages.register') }}
                                 </a>
-                                @if(auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
-                                    <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                        {{ __('messages.manage_orders') }}
-                                    </a>
-                                    <div class="border-t my-1"></div>
-                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                        {{ __('messages.dashboard') }}
-                                    </a>
-                                @endif
-                                <div class="border-t my-1"></div>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                        {{ __('messages.logout') }}
-                                    </button>
-                                </form>
                             </div>
-                        </div>
-                    </div>
-                @else
-                    <div class="flex items-center space-x-2">
-                        <a href="{{ route('login') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            {{ __('messages.login') }}
-                        </a>
-                        <a href="{{ route('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            {{ __('messages.register') }}
-                        </a>
-                    </div>
-                @endauth
+                        @endauth
 
                         <!-- Mobile menu button -->
                         <button type="button" class="md:hidden text-gray-700 hover:text-blue-600 transition-colors" id="mobile-menu-button">
@@ -182,22 +248,41 @@
             <!-- Mobile menu -->
             <div class="md:hidden hidden" id="mobile-menu">
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
-                    <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
-                        {{ __('messages.home') }}
-                    </a>
-                    @if(auth()->check() && auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
-                        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
-                            {{ __('messages.dashboard') }}
+                    {{-- Mobile menu items based on roles --}}
+                    @auth
+                        <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                            {{ __('messages.home') }}
                         </a>
-                    @endif
-                    <a href="{{ route('admin.products.index') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
-                        {{ __('messages.products') }}
-                    </a>
-                    @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
-                        <a href="{{ route('category.show', $category) }}" class="block px-6 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
-                            {{ __('messages.category_' . $category) }}
+                        
+                        @if(auth()->user()->hasRole(['admin', 'operation_manager', 'sales_manager']))
+                            <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                                {{ __('messages.dashboard') }}
+                            </a>
+                        @endif
+                        
+                        @if(auth()->user()->hasRole(['admin', 'operation_manager']))
+                            <a href="{{ route('admin.products.index') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                                {{ __('messages.products') }}
+                            </a>
+                        @endif
+                        
+                        @if(auth()->user()->hasRole('customer'))
+                            @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
+                                <a href="{{ route('category.show', $category) }}" class="block px-6 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                                    {{ __('messages.category_' . $category) }}
+                                </a>
+                            @endforeach
+                        @endif
+                    @else
+                        <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                            {{ __('messages.home') }}
                         </a>
-                    @endforeach
+                        @foreach(['kitchen', 'bathroom', 'living', 'other'] as $category)
+                            <a href="{{ route('category.show', $category) }}" class="block px-6 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                                {{ __('messages.category_' . $category) }}
+                            </a>
+                        @endforeach
+                    @endauth
                 </div>
             </div>
         </nav>
@@ -248,8 +333,8 @@
                     <!-- Company Info -->
                     <div class="col-span-1 md:col-span-2">
                         <div class="flex items-center space-x-2 mb-4">
-                            <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="h-8 w-auto" onerror="this.style.display='none'">
-                            <span class="font-bold text-xl">{{ config('app.name') }}</span>
+                            <img src="{{ asset('images/logo.jpg') }}" alt="{{ config('app.name') }}" class="h-8 w-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'">
+                            <span class="font-bold text-xl" style="display: none;">{{ config('app.name') }}</span>
                         </div>
                         <p class="text-gray-300 mb-4">
                             {{ __('messages.company_description') }}
@@ -278,7 +363,11 @@
                         <h3 class="font-semibold text-lg mb-4">{{ __('messages.quick_links') }}</h3>
                         <ul class="space-y-2">
                             <li><a href="{{ route('home') }}" class="text-gray-300 hover:text-white transition-colors">{{ __('messages.home') }}</a></li>
-                            <li><a href="{{ route('admin.products.index') }}" class="text-gray-300 hover:text-white transition-colors">{{ __('messages.products') }}</a></li>
+                            @auth
+                                @if(auth()->user()->hasRole(['admin', 'operation_manager']))
+                                    <li><a href="{{ route('admin.products.index') }}" class="text-gray-300 hover:text-white transition-colors">{{ __('messages.products') }}</a></li>
+                                @endif
+                            @endauth
                             <li><a href="#" class="text-gray-300 hover:text-white transition-colors">{{ __('messages.about_us') }}</a></li>
                             <li><a href="#" class="text-gray-300 hover:text-white transition-colors">{{ __('messages.contact') }}</a></li>
                         </ul>

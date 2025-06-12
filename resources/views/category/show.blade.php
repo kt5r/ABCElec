@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
-@section('title', __('Category: ') . $category->name)
+@section('title', $category ? __('Category: ') . $category->name : __('messages.all_products'))
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">{{ __('messages.category') }} : {{$category->name}}</h1>
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">
+        {{ $category ? __('messages.category') . ': ' . $category->name : __('messages.all_products') }}
+    </h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($products as $product)
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -24,9 +26,9 @@
                     <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $product->description }}</p>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-blue-600">${{ number_format($product->price, 2) }}</span>
-                        <a href="{{ route('product.show', $product->slug) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            {{ __('messages.view_details') }}
-                        </a>
+                            <a href="{{ route('product.show', $product->slug) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                {{ __('messages.view_details') }}
+                            </a>
                     </div>
                 </div>
             </div>

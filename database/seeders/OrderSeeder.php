@@ -27,7 +27,7 @@ class OrderSeeder extends Seeder
                 'user_id' => $customer->id,
                 'order_number' => Order::generateOrderNumber(),
                 'status' => $this->getRandomStatus(),
-                'total_amount' => 0, // Will be calculated
+                'total_amount' => 0, 
                 'shipping_address' => $customer->address ?? [
                     'street' => 'Sample Street ' . rand(1, 100),
                     'city' => 'Colombo',
@@ -92,7 +92,7 @@ class OrderSeeder extends Seeder
     private function getRandomStatus(): string
     {
         $statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-        $weights = [20, 25, 20, 30, 5]; // Percentage weights
+        $weights = [20, 25, 20, 30, 5]; 
         
         return $this->weightedRandom($statuses, $weights);
     }

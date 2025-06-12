@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UserSeeder extends Seeder
 {
@@ -14,85 +17,82 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Create Admin User
-        User::create([
-            'name' => 'System Administrator',
-            'email' => 'admin@cabc.lk',
-            'email_verified_at' => now(),
-            'password' => Hash::make('admin123'),
-            'role_id' => 1, // admin
-            'phone' => '+94711234567',
-            'address' => json_encode([
-                'street' => '123 Main Street',
-                'city' => 'Colombo',
-                'postal_code' => '00100',
-                'country' => 'Sri Lanka'
-            ])
-        ]);
-
+        User::firstOrCreate(
+            ['email' => 'admin@abcelec.com'],
+            [
+                'name' => 'ABC Admin',
+                'password' => Hash::make('pass1234'),
+                'email_verified_at' => Carbon::now(),
+                'status' => 'active',
+                'phone' => '+94123456789',
+                'address' => 'ABC Head Office, Colombo',
+                'role_id' => 1,
+            ]
+        );
+        
         // Create Operation Manager
-        User::create([
-            'name' => 'John Operations',
-            'email' => 'operations@cabc.lk',
-            'email_verified_at' => now(),
-            'password' => Hash::make('operations123'),
-            'role_id' => 2, // operation_manager
-            'phone' => '+94717654321',
-            'address' => json_encode([
-                'street' => '456 Business Ave',
-                'city' => 'Kandy',
-                'postal_code' => '20000',
-                'country' => 'Sri Lanka'
-            ])
-        ]);
+        User::firstOrCreate(
+            ['email' => 'operations@abcelec.com'],
+            [
+                'name' => 'Operation Manager',
+                'password' => Hash::make('pass1234'),
+                'email_verified_at' => Carbon::now(),
+                'status' => 'active',
+                'phone' => '+94123456790',
+                'address' => 'ABC Operations, Colombo',
+                'role_id' => 3,
+            ]
+        );
 
         // Create Sales Manager
-        User::create([
-            'name' => 'Sarah Sales',
-            'email' => 'sales@cabc.lk',
-            'email_verified_at' => now(),
-            'password' => Hash::make('sales123'),
-            'role_id' => 3, // sales_manager
-            'phone' => '+94719876543',
-            'address' => json_encode([
-                'street' => '789 Commerce Road',
-                'city' => 'Galle',
-                'postal_code' => '80000',
-                'country' => 'Sri Lanka'
-            ])
-        ]);
+        User::firstOrCreate(
+            ['email' => 'sales@abcelec.com'],
+            [
+                'name' => 'Sales Manager',
+                'password' => Hash::make('pass1234'),
+                'email_verified_at' => Carbon::now(),
+                'status' => 'active',
+                'phone' => '+94123456791',
+                'address' => 'ABC Sales Department, Colombo',
+                'role_id' => 4,
+            ]
+        );
 
-        // Create Sample Customers
-        User::factory()->create([
-            'name' => 'Nimal Perera',
-            'email' => 'nimal@example.com',
-            'password' => Hash::make('customer123'),
-            'role_id' => 4, // customer
-            'phone' => '+94771234567',
-            'address' => json_encode([
-                'street' => '45 Temple Road',
-                'city' => 'Colombo',
-                'postal_code' => '00300',
-                'country' => 'Sri Lanka'
-            ])
-        ]);
-
-        User::factory()->create([
-            'name' => 'Kamala Silva',
-            'email' => 'kamala@example.com',
-            'password' => Hash::make('customer123'),
-            'role_id' => 4, // customer
-            'phone' => '+94772345678',
-            'address' => json_encode([
-                'street' => '12 Hill Street',
-                'city' => 'Kandy',
-                'postal_code' => '20000',
-                'country' => 'Sri Lanka'
-            ])
-        ]);
-
-        // Create additional sample customers
-        User::factory(8)->create([
-            'role_id' => 4 // customer
-        ]);
+        // Create Sample Customer Users
+        $customers = [
+            [
+                'name' => 'John Doe',
+                'email' => 'john@example.com',
+                'phone' => '+94712345678',
+                'address' => '123 Main Street, Kandy',
+            ],
+            [
+                'name' => 'Jane Smith',
+                'email' => 'jane@example.com',
+                'phone' => '+94712345679',
+                'address' => '456 Oak Avenue, Colombo',
+            ],
+            [
+                'name' => 'Mike Wilson',
+                'email' => 'mike@example.com',
+                'phone' => '+94712345680',
+                'address' => '789 Pine Road, Galle',
+            ],
+        ];
+        
+        foreach ($customers as $customerData) {
+            User::firstOrCreate(
+                ['email' => $customerData['email']],
+                [
+                    'name' => $customerData['name'],
+                    'password' => Hash::make('pass1234'),
+                    'email_verified_at' => Carbon::now(),
+                    'status' => 'active',
+                    'phone' => $customerData['phone'],
+                    'address' => $customerData['address'],
+                    'role_id' => 2,
+                ]
+            );
+        }
     }
 }

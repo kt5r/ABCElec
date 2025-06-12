@@ -36,7 +36,7 @@
                             <p class="font-medium">{{ __('messages.' . $order->status) }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-600">{{ __('messages.total_amount') }}</p>
+                            <p class="text-sm text-gray-600">{{ __('messages.total') }}</p>
                             <p class="font-medium">LKR {{ number_format($order->total_amount, 2) }}</p>
                         </div>
                     </div>

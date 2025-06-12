@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -23,13 +21,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
         'phone',
         'address',
         'city',
         'postal_code',
         'country',
-        'is_active',
+        'status',
+        'role_id',
     ];
 
     /**
@@ -57,25 +55,90 @@ class User extends Authenticatable
         ];
     }
 
-    // Role checking methods
+    // RBAC Relationships
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    // RBAC Methods
+    public function hasRole($roles)
+    {
+        if (is_string($roles)) {
+            return $this->role && $this->role->name === $roles;
+        }
+
+        if (is_array($roles)) {
+            return $this->role && in_array($this->role->name, $roles);
+        }
+
+        return false;
+    }
+
+    public function hasPermission($permission)
+    {
+        if (!$this->role) {
+            return false;
+        }
+
+        return $this->role->permissions()->where('name', $permission)->exists();
+    }
+
+    public function hasAnyPermission($permissions)
+    {
+        if (!$this->role) {
+            return false;
+        }
+
+        if (is_string($permissions)) {
+            return $this->hasPermission($permissions);
+        }
+
+        if (is_array($permissions)) {
+            return $this->role->permissions()->whereIn('name', $permissions)->exists();
+        }
+
+        return false;
+    }
+
+    public function getRoleName()
+    {
+        return $this->role ? $this->role->name : 'customer';
+    }
+
+    public function getRoleDisplayName()
+    {
+        return $this->role ? $this->role->display_name : 'Customer';
+    }
+
+    // Check if user is admin
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->hasRole('admin');
     }
 
+    // Check if user is operation manager
     public function isOperationManager()
     {
-        return $this->role === 'operation_manager';
+        return $this->hasRole('operation_manager');
     }
 
+    // Check if user is sales manager
     public function isSalesManager()
     {
-        return $this->role === 'sales_manager';
+        return $this->hasRole('sales_manager');
     }
 
+    // Check if user is customer
     public function isCustomer()
     {
-        return $this->role === 'customer';
+        return $this->hasRole('customer');
+    }
+
+    // Check if user has staff role (admin, operation_manager, sales_manager)
+    public function isStaff()
+    {
+        return $this->hasRole(['admin', 'operation_manager', 'sales_manager']);
     }
 
     public function hasAdminAccess()
@@ -93,31 +156,44 @@ class User extends Authenticatable
         return in_array($this->role, ['admin', 'operation_manager', 'sales_manager']);
     }
 
-    public function hasRole($roles)
+     // Helper methods
+    public function getFullAddressAttribute()
     {
-        if (is_array($roles)) {
-            return in_array($this->role, $roles) || 
-                   ($this->role_id && in_array($this->role->name, $roles));
-        }
-
-        return $this->role === $roles || 
-               ($this->role_id && $this->role->name === $roles);
+        $parts = array_filter([
+            $this->address,
+            $this->city,
+            $this->postal_code,
+            $this->country
+        ]);
+        
+        return implode(', ', $parts);
     }
 
-    /**
-     * Get the roles that belong to the user.
-     */
-    public function roles(): BelongsToMany
+    public function updateLoginInfo()
     {
-        return $this->belongsToMany(Role::class);
+        $this->increment('login_count');
+        $this->update(['last_login_at' => now()]);
+    }
+    // Scope for active users
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
     }
 
-    /**
-     * Check if the user has any of the given roles.
-     */
-    public function hasAnyRole(array $roles): bool
+    // Scope for staff users
+    public function scopeStaff($query)
     {
-        return $this->roles()->whereIn('name', $roles)->exists();
+        return $query->whereHas('role', function ($q) {
+            $q->whereIn('name', ['admin', 'operation_manager', 'sales_manager']);
+        });
+    }
+
+    // Scope for customers
+    public function scopeCustomers($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('name', 'customer');
+        });
     }
 
     // Relationships
@@ -138,14 +214,5 @@ class User extends Authenticatable
         return $this->cartItems()->with('product')->get()->sum(function ($item) {
             return $item->quantity * ($item->product->sale_price ?? $item->product->price);
         });
-    }
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
-
-    public function getRoleAttribute()
-    {
-        return $this->role()->first()?->name ?? null;
     }
 }
