@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', __('Orders Management'))
+@section('title', __('messages.orders'))
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">{{ __('Orders Management') }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.orders') }}</h1>
     </div>
 
     <!-- Filters -->

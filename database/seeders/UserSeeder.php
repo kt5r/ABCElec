@@ -9,54 +9,52 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
-class AdminUserSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $adminRole = Role::where('name', 'admin')->first();
-
         // Create Admin User
         User::firstOrCreate(
-            ['email' => 'admin@cabc.com'],
+            ['email' => 'admin@abcelec.com'],
             [
                 'name' => 'ABC Admin',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('pass1234'),
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
                 'phone' => '+94123456789',
                 'address' => 'ABC Head Office, Colombo',
-                'role_id' => $adminRole->id,
+                'role_id' => 1,
             ]
         );
         
         // Create Operation Manager
         User::firstOrCreate(
-            ['email' => 'operations@cabc.com'],
+            ['email' => 'operations@abcelec.com'],
             [
                 'name' => 'Operation Manager',
-                'password' => Hash::make('operations123'),
+                'password' => Hash::make('pass1234'),
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
                 'phone' => '+94123456790',
                 'address' => 'ABC Operations, Colombo',
-                'role_id' => $adminRole->id,
+                'role_id' => 3,
             ]
         );
 
         // Create Sales Manager
         User::firstOrCreate(
-            ['email' => 'sales@cabc.com'],
+            ['email' => 'sales@abcelec.com'],
             [
                 'name' => 'Sales Manager',
-                'password' => Hash::make('sales123'),
+                'password' => Hash::make('pass1234'),
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
                 'phone' => '+94123456791',
                 'address' => 'ABC Sales Department, Colombo',
-                'role_id' => $adminRole->id,
+                'role_id' => 4,
             ]
         );
 
@@ -87,12 +85,12 @@ class AdminUserSeeder extends Seeder
                 ['email' => $customerData['email']],
                 [
                     'name' => $customerData['name'],
-                    'password' => Hash::make('customer123'),
+                    'password' => Hash::make('pass1234'),
                     'email_verified_at' => Carbon::now(),
                     'status' => 'active',
                     'phone' => $customerData['phone'],
                     'address' => $customerData['address'],
-                    'role_id' => $adminRole->id,
+                    'role_id' => 2,
                 ]
             );
         }

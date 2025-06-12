@@ -11,13 +11,6 @@ return [
     'recent_orders' => 'Recent Orders',
     'order_history' => 'Order History',
     'order_details' => 'Order Details',
-    'order_number' => 'Order Number',
-    'order_date' => 'Order Date',
-    'order_status' => 'Order Status',
-    'order_information' => 'Order Information',
-    'shipping_information' => 'Shipping Information',
-    'order_items' => 'Order Items',
-    'order_summary' => 'Order Summary',
     
     // Profile fields
     'name' => 'Name',
@@ -97,7 +90,6 @@ return [
     'no_orders_message' => 'You haven\'t placed any orders yet. Start shopping to see your order history here.',
     'no_address' => 'No address provided',
     'start_shopping' => 'Start Shopping',
-    'and_more' => 'and :count more',
     
     // Messages
     'updated' => 'Profile updated successfully.',

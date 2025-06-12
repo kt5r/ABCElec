@@ -40,32 +40,26 @@ Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product
 // Authentication routes
 require __DIR__.'/auth.php';
 
-// Guest routes
-Route::middleware('guest')->group(function () {
-    // Additional guest routes if needed
-});
-
 // Authenticated user routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Profile management
+    // Profile management - All authenticated users
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'show')->name('profile.show');
         Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
         Route::patch('/profile/password', 'updatePassword')->name('profile.update-password');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
-        // Order history and details
+        
+        // Order history - Customers can view their own, others can view all
         Route::get('/profile/orders', 'orderHistory')->name('profile.order-history');
         Route::get('/profile/orders/{order}', 'orderDetails')->name('profile.order-details');
         Route::patch('/profile/orders/{order}/cancel', 'cancelOrder')->name('profile.order-cancel');
         Route::get('/profile/orders/{order}/invoice', 'orderInvoice')->name('profile.order-invoice');
     });
 
-    // Shopping Cart
-    Route::controller(CartController::class)->group(function () {
+    // Cart - Only for customers
+    Route::middleware(['role:customer', 'role.redirect'])->controller(CartController::class)->group(function () {
+        // Shopping Cart
         Route::get('/cart', 'index')->name('cart.index');
         Route::post('/cart/add/{product}', 'add')->name('cart.add');
         Route::put('/cart/update/{cartItem}', 'update')->name('cart.update');
@@ -74,40 +68,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cart/count', 'count')->name('cart.count');
     });
     
-    // Checkout
-    Route::controller(CheckoutController::class)->group(function () {
+    // Checkout - Only for customers
+    Route::middleware(['role:customer','role.redirect'])->controller(CheckoutController::class)->group(function () {
         Route::get('/checkout', 'index')->name('checkout.index');
         Route::post('/checkout/process', 'process')->name('checkout.process');
         Route::get('/checkout/success/{order}', 'success')->name('checkout.success');
         Route::get('/checkout/failed', 'failed')->name('checkout.failed');
     });
-});
-
-// Admin routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-
-    // Product management
-    Route::resource('products', ProductController::class)->except(['show']);
-    Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
-    
-    // Order management
-    Route::get('orders', [AdminController::class, 'orders'])->name('orders.index');
-    // Route::get('orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');
-    // Route::patch('orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.update-status');
-    
-    // User management
-    Route::get('users', [AdminController::class, 'users'])->name('users.index');
-    Route::get('users/{user}', [AdminController::class, 'showUser'])->name('users.show');
-    // Route::patch('users/{user}/status', [AdminController::class, 'updateUserStatus'])->name('users.update-status');
-    // Route::get('users/create', [AdminController::class, 'createUser'])->name('users.create');
-    // Route::post('users', [AdminController::class, 'storeUser'])->name('users.store');
-    
-});
-
-// Sales Reports Routes
-Route::middleware(['auth', 'can:view-sales-reports'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
 });
 
 // API routes for AJAX calls
@@ -116,6 +83,45 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     Route::get('/categories/active', [CategoryController::class, 'active'])->name('categories.active');
     Route::post('/cart/quick-add', [CartController::class, 'quickAdd'])->name('cart.quick-add');
 });
+
+// Add these middleware groups to your existing routes
+
+// Admin routes with role-based access
+Route::middleware(['auth', 'role:admin,operation_manager,sales_manager', 'role.redirect'])
+    ->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard (all admin roles)
+    Route::middleware('role:admin,operation_manager')->group(function () {
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::resource('categories', CategoryController::class);
+    });
+    
+    // Products (admin, operation_manager only)
+    Route::middleware('role:admin,operation_manager')->group(function () {
+        Route::resource('products', ProductController::class)->except(['show']);
+        Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
+    });
+    
+    // Orders (admin, operation_manager only)
+    Route::middleware('role:admin,operation_manager')->group(function () {
+        Route::get('orders', [AdminController::class, 'orders'])->name('orders.index');
+        Route::get('orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');
+        Route::patch('orders/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('orders.update-status');
+    });
+    
+    // Users (admin only)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('users', [AdminController::class, 'users'])->name('users.index');
+        Route::get('users/create', [AdminController::class, 'createUser'])->name('users.create');
+        Route::post('users', [AdminController::class, 'storeUser'])->name('users.store');
+        Route::get('users/{user}', [AdminController::class, 'showUser'])->name('users.show');
+    });
+    
+    // Sales Reports (all admin roles)
+    Route::get('reports/sales', [SalesReportController::class, 'index'])->name('reports.sales');
+});
+
+
 
 // Authentication Routes
 Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])

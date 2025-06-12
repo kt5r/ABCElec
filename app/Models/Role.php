@@ -4,54 +4,63 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'display_name',
         'description',
     ];
 
-    /**
-     * Get the users that belong to the role.
-     */
-    public function users(): BelongsToMany
+    public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(User::class);
     }
 
-    public function permissions(): BelongsToMany
+    public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'role_permissions');
     }
 
-    public function hasPermission(string $permission): bool
+    public function hasPermission($permission)
     {
-        return $this->permissions()->where('name', $permission)->exists();
+        if (is_string($permission)) {
+            return $this->permissions()->where('name', $permission)->exists();
+        }
+
+        if (is_array($permission)) {
+            return $this->permissions()->whereIn('name', $permission)->exists();
+        }
+
+        return false;
     }
 
-    public function isAdmin(): bool
+    public function givePermissionTo($permission)
     {
-        return in_array($this->name, ['admin', 'operation_manager']);
+        if (is_string($permission)) {
+            $permission = Permission::where('name', $permission)->first();
+        }
+
+        if ($permission && !$this->permissions()->where('permission_id', $permission->id)->exists()) {
+            $this->permissions()->attach($permission->id);
+        }
+
+        return $this;
     }
 
-    public function isSalesManager(): bool
+    public function revokePermissionTo($permission)
     {
-        return $this->name === 'sales_manager';
-    }
+        if (is_string($permission)) {
+            $permission = Permission::where('name', $permission)->first();
+        }
 
-    public function isCustomer(): bool
-    {
-        return $this->name === 'customer';
+        if ($permission) {
+            $this->permissions()->detach($permission->id);
+        }
+
+        return $this;
     }
 }

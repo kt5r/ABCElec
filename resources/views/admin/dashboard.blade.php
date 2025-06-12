@@ -128,11 +128,9 @@
                 </div>
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
-                        @can('view-sales-reports')
                         <a href="{{ route('admin.reports.sales') }}" class="font-medium text-purple-600 hover:text-purple-500">
                             {{ __('dashboard.view_reports') }}
                         </a>
-                        @endcan
                     </div>
                 </div>
             </div>

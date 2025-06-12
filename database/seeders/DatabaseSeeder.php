@@ -17,10 +17,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             
             // User seeders
-            AdminUserSeeder::class,
-            SalesManagerSeeder::class,
-            OperationManagerSeeder::class,
-            CustomerSeeder::class,
+            UserSeeder::class,
             
             // Category and Product seeders
             CategorySeeder::class,

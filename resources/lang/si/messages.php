@@ -40,6 +40,7 @@ return [
     'unavailable' => 'නොමැත',
     'adding' => 'එක් කරමින්',
     'error_occured' => 'දෝෂයක් සිදුව ඇත. කරුණාකර නැවත උත්සාහ කරන්න.',
+    'create_product' => 'එක් කරන්න',
 
     // Cart related
     'shopping_cart' => 'සාප්පු බෑගය',
@@ -265,5 +266,23 @@ return [
     'sales_by_product' => 'නිෂ්පාදන අනුව විකුණුම්',
     'sales_by_hour' => 'පැය අනුව විකුණුම්',
     'payment_methods' => 'ගෙවීමේ ක්‍රම', 
+
+    'create_your_account' => 'ඔබගේ ගිණුම සාදන්න',
+    'full_name' => 'සම්පූර්ණ නම',
+    'email_address' => 'විද්‍යුත් තැපැල් ලිපිනය',
+    'phone_number' => 'දුරකථන අංකය',
+    'create_account' => 'ගිණුම සාදන්න',
+    'already_have_an_account' => 'දැනටමත් ගිණුමක් තිබේද?',
+    'sign_in_here' => 'මෙහි පිවිසෙන්න',
+    'sign_in_to_your_account' => 'ඔබගේ ගිණුමට පිවිසෙන්න',
+    'remember_me' => 'මාව මතක තබා ගන්න',
+    'forgot_your_password' => 'මුරපදය අමතක වුනාද?',
+    'no_account' => 'ගිණුමක් නැද්ද?',
+    'register_here' => 'මෙහි ලියාපදිංචි වන්න',
+    'enter_your_full_name' => 'ඔබගේ සම්පූර්ණ නම ඇතුලත් කරන්න',
+    'enter_your_email' => 'ඔබගේ විද්‍යුත් තැපෑල ඇතුලත් කරන්න',
+    'enter_your_phone_number' => 'ඔබගේ දුරකථන අංකය ඇතුලත් කරන්න',
+    'enter_your_password' => 'මුරපදය ඇතුලත් කරන්න',
+    'confirm_your_password' => 'ඔබගේ මුරපදය තහවුරු කරන්න',
     
 ];

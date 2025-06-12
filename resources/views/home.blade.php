@@ -13,9 +13,14 @@
             <p class="text-xl md:text-2xl mb-8 text-blue-100">
                 {{ __('messages.company_description') }}
             </p>
-            <a href="#categories" class="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors inline-block">
-                {{ __('messages.shop_now') }}
-            </a>
+            @auth
+                @if(auth()->user()->role->name === 'customer')
+                    <a href="#categories" class="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors inline-block">
+                        {{ __('messages.shop_now') }}
+                    </a>
+                @endif
+            @endauth
+            
         </div>
     </div>
 </div>
@@ -50,7 +55,7 @@
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-blue-600">${{ number_format($product->price, 2) }}</span>
                         <a href="{{ route('product.show', $product->slug) }}" 
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
                             {{ __('messages.view_details') }}
                         </a>
                     </div>
@@ -100,26 +105,9 @@
     </div>
 </section>
 
-<!-- Newsletter Section -->
-<section class="bg-blue-600 text-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-bold mb-4">{{ __('messages.stay_updated') }}</h2>
-        <p class="text-blue-100 mb-8 max-w-2xl mx-auto">
-            {{ __('messages.newsletter_description') }}
-        </p>
-        <form class="max-w-md mx-auto flex">
-            <input type="email" placeholder="{{ __('messages.enter_email') }}" 
-                   class="flex-1 px-4 py-3 rounded-l-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300">
-            <button type="submit" 
-                    class="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-r-lg font-semibold transition-colors">
-                {{ __('messages.subscribe') }}
-            </button>
-        </form>
-    </div>
-</section>
 
 <!-- Features Section -->
-<section class="py-16 bg-gray-50">
+<section class="bg-gray-300 text-gray-800 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="text-center">
@@ -131,7 +119,7 @@
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('messages.best_prices') }}</h3>
                 <p class="text-gray-600">{{ __('messages.best_prices_description') }}</p>
             </div>
-            
+
             <div class="text-center">
                 <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +129,7 @@
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('messages.fast_delivery') }}</h3>
                 <p class="text-gray-600">{{ __('messages.fast_delivery_description') }}</p>
             </div>
-            
+
             <div class="text-center">
                 <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

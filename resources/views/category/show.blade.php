@@ -26,9 +26,9 @@
                     <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $product->description }}</p>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-blue-600">${{ number_format($product->price, 2) }}</span>
-                        <a href="{{ route('product.show', $product->slug) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            {{ __('messages.view_details') }}
-                        </a>
+                            <a href="{{ route('product.show', $product->slug) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                {{ __('messages.view_details') }}
+                            </a>
                     </div>
                 </div>
             </div>
